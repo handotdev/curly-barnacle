@@ -20,6 +20,7 @@
   "homepage": "https://github.com/hanywang2/curly-barnacle#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "nodemailer": "^6.4.6",
     "puppeteer": "^2.1.1"
   }
 }
