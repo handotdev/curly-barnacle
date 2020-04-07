@@ -1,0 +1,25 @@
+{
+  "name": "curly-barnacle",
+  "version": "1.0.0",
+  "description": "For all your curly barnacle needs on Firebase",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanywang2/curly-barnacle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hanywang2/curly-barnacle/issues"
+  },
+  "homepage": "https://github.com/hanywang2/curly-barnacle#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "puppeteer": "^2.1.1"
+  }
+}
