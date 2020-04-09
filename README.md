@@ -8,11 +8,8 @@ For all your curly barnacle needs on Firebase
 # Install dependencies for server
 npm install
 
-# Install dependencies for client
-npm run client-install
-
 # Run the client & server with concurrently
-npm run dev
+npm run both
 
 # Run the Express server only
 npm run server
