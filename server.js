@@ -74,7 +74,7 @@ app.get('/api/schedule', (req, res) => {
     .catch((err) => {
         res.send({success: false, response: 'browser did not load'})
     });
-})
+});
 
 const PORT = 5000;
 

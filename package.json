@@ -22,9 +22,10 @@
   "homepage": "https://github.com/hanywang2/curly-barnacle#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "concurrently": "^5.1.0",
     "express": "^4.17.1",
-    "puppeteer": "^2.1.1"
+    "nodemailer": "^6.4.6",
+    "puppeteer": "^2.1.1",
+    "concurrently": "^5.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
