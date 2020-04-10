@@ -11,7 +11,7 @@ function Window() {
       <span className="dot" style={{background: "#5AC05A"}}></span>
     </div>
     <div className="column middle">
-      <input type="text" value="https://www.gmail.com" />
+      <input className="domain" type="text" value="https://www.gmail.com" />
     </div>
   </div>
 
