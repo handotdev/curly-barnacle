@@ -4,77 +4,93 @@ const app = express();
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 
-app.get('/api/schedule', (req, res) => {
 
-    const { id } = req.query;
+const parseSchedule = id => {
+    return new Promise((resolve, reject) => {
+        const url = `https://classes.cornell.edu/shared/schedule/SP20/${id}`;
 
-    const url = `https://classes.cornell.edu/shared/schedule/${id}`;
+        puppeteer
+            .launch()
+            .then(browser => browser.newPage())
+            .then(page => {
+                return page.goto(url)
+                    .then(() => {
+                        return page.content();
+                    });
+            })
+            .then(html => {
+                const $ = cheerio.load(html);
 
-    puppeteer
-    .launch()
-    .then(browser => browser.newPage())
-        .then(page => {
-            return page.goto(url).then(() => {
-                return page.content();
-            });
-        })
-    .then(html => {
-        const $ = cheerio.load(html);
+                const tableWrapper = $(".fc-content-skeleton");
 
-        const events = $('.fc-time-grid-event.fc-v-event.fc-event.fc-start.fc-end');
+                //get table
+                const table = tableWrapper[0].children[0];
+                // get table body
+                const tableBody = table.children[0];
+                // get .tr class
+                const tr = tableBody.children[0];
+                // finally... get the content-carrying .tds 
+                const tdList = tr.children.slice(1);
+                let userCoursesData = []
+                for (const index in tdList) {
+                    const tdEl = tdList[index];
 
-        if (events.length === 0) res.send({success: false, response: 'invalid schedule id'});
-        
-        // TODO: Find an optimized and more organized approach to retrieving
-        // the values rather than this rigid approach
+                    // get .event-container
+                    const eventContainer = tdEl.children[0].children[1];
+                    eventContainer.children.forEach(child => {
+                        if (child.name === 'a') { //we are now in the classlist .fc-time-grid-event.fc-v-event.fc-event.fc-start.fc-end
+                            // Get class of 'fc-content'
+                            const content = child.children[0];
 
-        let userCoursesData = [];
+                            // Get DOM of span with course code
+                            const titleSpan = content.children[0];
+                            // Retrieve value of course code
+                            const course = titleSpan.children[0].data;
 
-        for (const index in events) {
-            const event = events[index];
+                            // Get DOM of span with course details
+                            const detailsSpan = content.children[2];
+                            // Identify DOM of section value
+                            const sectionDOM = detailsSpan.children[0];
+                            // Retrieve value of section
+                            const section = sectionDOM.data;
+                            // Identify DOM of times value
+                            const timeDOM = detailsSpan.children[4];
+                            // Retrieve value of time
+                            const time = timeDOM.data;
 
-            if (event.name === 'a') {
-                // Get class of 'fc-content'
-                const content = event.children[0];
-                
-                // Get DOM of span with course code
-                const titleSpan = content.children[0];
-                // Retrieve value of course code
-                const course = titleSpan.children[0].data;
+                            const courseTime = {
+                                course,
+                                section,
+                                time,
+                                index
+                            }
 
-                // Get DOM of span with course details
-                const detailsSpan = content.children[2];
-                // Identify DOM of section value
-                const sectionDOM = detailsSpan.children[0];
-                // Retrieve value of section
-                const section = sectionDOM.data;
-                // Identify DOM of times value
-                const timeDOM = detailsSpan.children[4];
-                // Retrieve value of time
-                const time = timeDOM.data;
-
-                const courseTime = {
-                    course,
-                    section,
-                    time
+                            userCoursesData.push(courseTime)
+                        }
+                    })
                 }
-
-                userCoursesData.push(courseTime)
-            }
-        }
-
-        const requestResult = {
-            success: true,
-            response: 'data successfully retrieved',
-            data: userCoursesData 
-        }
-        
-        res.send(requestResult);
+                console.log(userCoursesData)
+                resolve(userCoursesData)
+            })
+            .catch(err => reject(err))
     })
-    .catch((err) => {
-        res.send({success: false, response: 'browser did not load'})
-    });
-});
+}
+
+app.get('/api/schedule', (req, res) => {
+    parseSchedule(req.query.id)
+        .then(result => res.send({
+            success: true,
+            data: result,
+            response: 'data successfully retrieved'
+        }))
+        .catch(err => {
+            console.log(err);
+            res.send({
+                success: false,
+                response: "somethng went wrong. This is likely to be a mistake in schedule parsing."
+            })
+        })
+})
 
 const PORT = 5000;
 
