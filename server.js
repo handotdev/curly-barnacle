@@ -4,10 +4,18 @@ const app = express();
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 
-
+const dayMapping = {
+    0: 'M',
+    1: 'T',
+    2: 'W',
+    3: 'R',
+    4: 'F',
+    5: 'S',
+    6: 'N' //Choosing N for Sunday, don't want to choose 2 letters because that makes parsing a tad bit trickier. 
+}
 const parseSchedule = id => {
     return new Promise((resolve, reject) => {
-        const url = `https://classes.cornell.edu/shared/schedule/SP20/${id}`;
+        const url = `https://classes.cornell.edu/shared/schedule/${id}`;
 
         puppeteer
             .launch()
@@ -20,7 +28,6 @@ const parseSchedule = id => {
             })
             .then(html => {
                 const $ = cheerio.load(html);
-
                 const tableWrapper = $(".fc-content-skeleton");
 
                 //get table
@@ -32,6 +39,7 @@ const parseSchedule = id => {
                 // finally... get the content-carrying .tds 
                 const tdList = tr.children.slice(1);
                 let userCoursesData = []
+                let courseMapping = {}
                 for (const index in tdList) {
                     const tdEl = tdList[index];
 
@@ -58,19 +66,24 @@ const parseSchedule = id => {
                             // Retrieve value of time
                             const time = timeDOM.data;
 
+                            if (`${course} ${section}` in courseMapping) {
+                                courseMapping[`${course} ${section}`] += dayMapping[index]
+                            } else {
+                                courseMapping[`${course} ${section}`] = `${time} ${dayMapping[index]}`
+                            }
                             const courseTime = {
                                 course,
                                 section,
                                 time,
                                 index
                             }
-
                             userCoursesData.push(courseTime)
                         }
                     })
                 }
                 console.log(userCoursesData)
-                resolve(userCoursesData)
+                console.log(courseMapping);
+                resolve(courseMapping)
             })
             .catch(err => reject(err))
     })
@@ -87,7 +100,7 @@ app.get('/api/schedule', (req, res) => {
             console.log(err);
             res.send({
                 success: false,
-                response: "somethng went wrong. This is likely to be a mistake in schedule parsing."
+                response: "something went wrong. This is likely to be a mistake in schedule parsing."
             })
         })
 })
