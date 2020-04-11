@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express();
-
+const cors = require('cors');
 //const scraper = require('./Scraper-Controller.js')
 const functions = require('./functions/index.js')
 
+app.use(cors())
 // app.get('/api/schedule', (req, res) => {
 //     scraper.parseSchedule(req.query.id)
 //         .then(result => {
@@ -33,7 +34,3 @@ const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 })
-
-// module.exports = {
-//     parseSchedule: parseSchedule
-// }

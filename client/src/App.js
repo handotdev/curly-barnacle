@@ -13,13 +13,16 @@ function App() {
   return (
     <div>
       <Layout className="layout">
-        <Header style={{ color: '#FFF' }}>
-          Zoom University@Cornell
-      </Header>
+        <Header style={{ color: '#FFF' }}>Zoom University@Cornell</Header>
         <Content>
-          <div className="site-layout-content" style={{ padding: '25px 50px 85px 50px' }}>
-
-            <h1><BellTwoTone /> Receive email reminders with Zoom invites to your classes</h1>
+          <div
+            className="site-layout-content"
+            style={{ padding: '25px 50px 85px 50px' }}
+          >
+            <h1>
+              <BellTwoTone /> Receive email reminders with Zoom invites to your
+              classes
+            </h1>
             {/* Add Product Info */}
             <Window />
             <Divider>Sign Up</Divider>
@@ -27,7 +30,16 @@ function App() {
           </div>
         </Content>
       </Layout>
-      <Footer style={{ textAlign: 'center', width: '100%', position: 'fixed', bottom: '0' }}>Built with ❤️ by Ansh Godha & Han Wang wishing everyone well in these uncertain times</Footer>
+      <Footer
+        style={{
+          textAlign: 'center',
+          width: '100%',
+          position: 'fixed',
+          bottom: '0',
+        }}
+      >
+        Built with ❤️ by Ansh Godha & Han Wang wishing everyone well in these uncertain times
+      </Footer>
     </div>
   );
 }
