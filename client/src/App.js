@@ -38,8 +38,7 @@ function App() {
           bottom: '0',
         }}
       >
-        Built with ❤️ by Ansh Godha & Han Wang wishing everyone well in these
-        uncertain times
+        Built with ❤️ by Ansh Godha & Han Wang wishing everyone well in these uncertain times
       </Footer>
     </div>
   );
