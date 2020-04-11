@@ -12,16 +12,18 @@ const handleFormSubmission = async (email, url) => {
 
   parseSchedule(id)
     .then(response => {
-      classes = Object.keys(response);
-      classCollection = db.collection('classList');
+      const classes = Object.keys(response);
+      const classCollection = db.collection('classList');
       for (let i = 0; i < classes.length; i++) {
         const data = {
           email: email,
           className: classes[i]
         }
-        await classCollection.doc(response[classes[i]]).doc()set(data, { merge: true })
+        await classCollection.doc(response[classes[i]]).collection('students').doc().set(data, { merge: true })
       }
     })
     .then(_ => res.send('success'))
     .catch(err => console.log(err));
 }
+
+export { handleFormSubmission }

@@ -4,6 +4,8 @@ const app = express();
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 
+import { handleFormSubmission } from './functions/index'
+
 const dayMapping = {
     0: 'M',
     1: 'T',
@@ -91,11 +93,13 @@ const parseSchedule = id => {
 
 app.get('/api/schedule', (req, res) => {
     parseSchedule(req.query.id)
-        .then(result => res.send({
-            success: true,
-            data: result,
-            response: 'data successfully retrieved'
-        }))
+        .then(result => {
+            res.send({
+                success: true,
+                data: result,
+                response: 'data successfully retrieved'
+            });
+        })
         .catch(err => {
             console.log(err);
             res.send({
