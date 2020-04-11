@@ -29,27 +29,20 @@ export class Fields extends Component {
     }
 
     render() {
-
-        const validateEmail = () => {
-            console.log("Validating: ");
-            const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return !emailRegex.test(this.state.email.toLowerCase());
-        }
-
         return (
             <Form
-            {...layout}
-            style={{marginTop: '24px'}}
-            name="basic"
-            initialValues={{ remember: true }}
-            onFinish={this.onFinish}
-            // onFinishFailed={onFinishFailed}
+                {...layout}
+                style={{marginTop: '24px'}}
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={this.onFinish}
+                // onFinishFailed={onFinishFailed}
             >
             <Form.Item
-            label="Email"
-            name="email"
-            style={{textAlign: 'left'}}
-            rules={[{ required: validateEmail, message: 'Please enter a valid email' }]}
+                label="Email"
+                name="email"
+                style={{textAlign: 'left'}}
+                rules={[{ required: true, message: 'Email field cannot be empty'}, { type: 'email', message: 'Please enter a valid email' }]}
             >
             <Input
                 placeholder="hyw2@cornell.edu"
@@ -58,9 +51,9 @@ export class Fields extends Component {
             </Form.Item>
             <Form.Item
             label="Schedule URL"
-            name="link"
+            name="url"
             style={{textAlign: 'left'}}
-            rules={[{ required: true, message: 'Please enter a valid schedule link' }]}
+            rules={[{ required: true, message: 'URL field cannot be empty' }, { pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/(sp|su|fa|wi)[1-2][0-9]\/.....+/gi, message: 'Please enter a valid schedule URL' }]}
             >
             <Input
                 placeholder="https://classes.cornell.edu/shared/schedule/SP20/92eac951cf5b329be2522a9829421833"
