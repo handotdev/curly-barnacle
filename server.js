@@ -1,5 +1,8 @@
-const express = require('express')
+const express = require('express');
+const cors = require('cors');
 const app = express();
+// Enable cors
+app.use(cors());
 
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');

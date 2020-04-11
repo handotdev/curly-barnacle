@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Form, Input, Button, Tooltip, message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -19,12 +20,37 @@ export class Fields extends Component {
 
         this.state = {
             email: "",
-            url: ""
+            url: "",
+            loading: false
         }
     }
 
     onFinish = () => {
-        message.success(`Successfully signed up with ${this.state.email}`);
+        // Set state for loading for button spinner
+        this.setState({loading: true});
+
+        const { url } = this.state;
+        const key = "/shared/schedule/";
+
+        const keyIndex = url.indexOf(key);
+        const idIndex = keyIndex + key.length;
+
+        const schedulerId = url.substring(idIndex);
+
+        // Retrieve schedule info from API
+        axios.get(`http://localhost:5000/api/schedule?id=${schedulerId}`)
+            .then(res => {
+                this.setState({loading: false});
+                if (res.data.success) {
+                    message.success(`Successfully signed up with ${this.state.email}`);
+                    console.log(res.data.data);
+                } else {
+                    message.error('Invalid Scheduler URL');
+                }
+            }).catch(() => {
+                this.setState({loading: false});
+                message.error('Enable to sign up at the moment. Please try again later');
+            })
     }
 
     render() {
@@ -66,8 +92,8 @@ export class Fields extends Component {
             <Form.Item
             {...tailLayout}
             >
-            <Button type="primary" htmlType="submit">
-                Submit
+            <Button type="primary" htmlType="submit" loading={this.state.loading}>
+                { (this.state.loading) ? 'Loading' : 'Submit' }
             </Button>
             </Form.Item>
         </Form>

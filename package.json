@@ -21,11 +21,13 @@
   },
   "homepage": "https://github.com/hanywang2/curly-barnacle#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
+    "concurrently": "^5.1.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "nodemailer": "^6.4.6",
-    "puppeteer": "^2.1.1",
-    "concurrently": "^5.1.0"
+    "puppeteer": "^2.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
