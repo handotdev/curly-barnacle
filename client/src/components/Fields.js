@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Tooltip } from 'antd';
+import { Form, Input, Button, Tooltip, message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 import './Fields.css';
@@ -24,8 +24,7 @@ export class Fields extends Component {
     }
 
     onFinish = () => {
-        console.log(this.state.email);
-        console.log(this.state.url);
+        message.success(`Successfully signed up with ${this.state.email}`);
     }
 
     render() {
@@ -35,8 +34,7 @@ export class Fields extends Component {
                 style={{marginTop: '24px'}}
                 name="basic"
                 initialValues={{ remember: true }}
-                onFinish={this.onFinish}
-                // onFinishFailed={onFinishFailed}
+                onFinish={this.onFinish} 
             >
             <Form.Item
                 label="Email"
@@ -53,7 +51,7 @@ export class Fields extends Component {
             label="Schedule URL"
             name="url"
             style={{textAlign: 'left'}}
-            rules={[{ required: true, message: 'URL field cannot be empty' }, { pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/(sp|su|fa|wi)[1-2][0-9]\/.....+/gi, message: 'Please enter a valid schedule URL' }]}
+            rules={[{ required: true, message: 'URL field cannot be empty' }, { pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/(sp|su|fa|wi)[1-2][0-9]\/.......+/gi, message: 'Please enter a valid shared schedule URL' }]}
             >
             <Input
                 placeholder="https://classes.cornell.edu/shared/schedule/SP20/92eac951cf5b329be2522a9829421833"
