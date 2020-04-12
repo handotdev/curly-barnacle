@@ -1,9 +1,10 @@
-const functions = require('firebase-functions')
-const admin = require('firebase-admin')
-const scraper = require('../scraper.js')
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const scraper = require('../scraper.js');
 //import * as async from 'async'
 
-let serviceAccount = '../service-account.json'
+let serviceAccount = require('./service-account.json');
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -28,8 +29,9 @@ function handleFormSubmission(email, url) {
     const id = url.slice(indexSp + splitter.length);
 
     scraper.parseSchedule(id)
-      .then(response => {
-        const collectionsRef = db.collection('classTimes');
+      .then(async (response) => {
+        console.log(response)
+        const collectionsRef = await db.collection('classTimes');
         let promises = []
         response.forEach(courseInfo => {
           for (let i = 0; i < courseInfo['days'].length; i += 1) {
@@ -37,13 +39,10 @@ function handleFormSubmission(email, url) {
             // Get the string containing the group of days this class takes place
             let currentDayGroup = courseInfo['days'][i];
 
-            // Split the group of days into a string
-            let dayList = currentDayGroup.split()
-
-            for (let char in dayList) {
+            for (let j = 0; j < currentDayGroup.length; j += 1) {
 
               // This document name will be something like '11:40AM T' or '11:40AM R'
-              let docName = courseInfo['times'][i] + ' ' + char
+              let docName = courseInfo['times'][i] + ' ' + currentDayGroup.charAt(j)
 
               let docData = {
                 course: courseInfo['course'],
@@ -52,11 +51,9 @@ function handleFormSubmission(email, url) {
               }
 
               promises.push(insertData(collectionsRef, docName, email, docData))
-
             }
           }
           Promise.all(promises)
-
         })
       })
       .then(_ => resolve())
