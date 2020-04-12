@@ -6,9 +6,12 @@ const scraper = require('../Scraper-Controller.js')
 admin.initializeApp(functions.config().firebase);
 let db = admin.firestore()
 
-const insertData = (collectionRef, data, time) => {
+const insertData = (collectionRef, time, data) => {
   return new Promise((resolve, reject) => {
-    collectionRef.doc(time).collection('students').add(data, { merge: true })
+    console.log(time)
+    collectionRef.doc(time)
+      .collection('students')
+      .add(data, { merge: true })
       .then(() => resolve())
       .catch(err => reject(err))
   })
