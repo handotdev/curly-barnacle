@@ -1,6 +1,6 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const scraper = require('../Scraper-Controller.js')
+const scraper = require('../scraper.js')
 //import * as async from 'async'
 
 admin.initializeApp(functions.config().firebase);
