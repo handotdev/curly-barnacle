@@ -86,6 +86,41 @@ function parseSchedule(id) {
   })
 }
 
+function parse2(id) {
+  return new Promise((resolve, reject) => {
+    const url = `https://classes.cornell.edu/shared/schedule/${id}`;
+
+    puppeteer
+      .launch()
+      .then(browser => browser.newPage())
+      .then(page => {
+        return page.goto(url)
+          .then(() => {
+            return page.content();
+          });
+      })
+      .then(html => {
+        const $ = cheerio.load(html);
+        const sidebarDiv = $(".roster-sidenav-tab-build")[0];
+        let userCourseMapping = {}
+        const courses = sidebarDiv.children.filter(child => child.name === 'scheduler-shared-course');
+
+        // console.log(courses);
+
+        courses.forEach(course => {
+          // console.log(course.name)
+          const innerDiv = course.children[0]
+          const courseHeader = innerDiv.children[0]
+          const courseBody = innerDiv.children[1]
+
+          // let courseNumber = courseHeader.children[0].children[0].data
+          console.log(courseHeader.children);
+          // console.log(courseNumber)
+        })
+      })
+  })
+}
+
 module.exports = {
-  parseSchedule: parseSchedule
+  parseSchedule: parse2
 }
