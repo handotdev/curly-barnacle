@@ -30,6 +30,11 @@ app.get('/api/firebase-test', (req, res) => {
         .catch(err => console.log(err))
 })
 
+scraper.parseSchedule('SP20/92eac951cf5b329be2522a9829421833')
+    .then((res) => {
+        // console.log(result);
+    });
+
 const PORT = 3333;
 
 app.listen(PORT, () => {

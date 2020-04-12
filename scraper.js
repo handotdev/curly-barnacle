@@ -101,22 +101,17 @@ function parse2(id) {
       })
       .then(html => {
         const $ = cheerio.load(html);
-        const sidebarDiv = $(".roster-sidenav-tab-build")[0];
-        let userCourseMapping = {}
-        const courses = sidebarDiv.children.filter(child => child.name === 'scheduler-shared-course');
+        const expander = $(".expander.ng-binding");
 
-        // console.log(courses);
+        // Loops through all expanders
+        for (let i = 0; i < expander.length; i++) {
+          const courseHeader = expander[i];
+          courseCode = courseHeader.children[1].children[0].data;
+          console.log(courseCode);
+        }
 
-        courses.forEach(course => {
-          // console.log(course.name)
-          const innerDiv = course.children[0]
-          const courseHeader = innerDiv.children[0]
-          const courseBody = innerDiv.children[1]
-
-          // let courseNumber = courseHeader.children[0].children[0].data
-          console.log(courseHeader.children);
-          // console.log(courseNumber)
-        })
+        
+        
       })
   })
 }
