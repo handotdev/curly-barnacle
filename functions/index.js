@@ -3,16 +3,20 @@ const admin = require('firebase-admin')
 const scraper = require('../scraper.js')
 //import * as async from 'async'
 
-admin.initializeApp(functions.config().firebase);
+let serviceAccount = '../service-account.json'
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 let db = admin.firestore()
 
-const insertData = (collectionRef, time, data) => {
+const insertData = (collectionsRef, docName, email, docData) => {
   return new Promise((resolve, reject) => {
-    console.log(time)
-    collectionRef.doc(time)
+    collectionsRef
+      .doc(docName)
       .collection('students')
-      .add(data, { merge: true })
-      .then(() => resolve())
+      .doc(email)
+      .set(docData, { merge: true })
+      .then(_ => resolve())
       .catch(err => reject(err))
   })
 }
@@ -25,20 +29,35 @@ function handleFormSubmission(email, url) {
 
     scraper.parseSchedule(id)
       .then(response => {
-        const classes = Object.keys(response);
-        const classCollectionRef = db.collection('classList');
-
-        //need to restructure for loop with asychronous foreachof
+        const collectionsRef = db.collection('classTimes');
         let promises = []
-        for (let i = 0; i < classes.length; i++) {
-          const data = {
-            email: email,
-            className: classes[i]
+        response.forEach(courseInfo => {
+          for (let i = 0; i < courseInfo['days'].length; i += 1) {
+
+            // Get the string containing the group of days this class takes place
+            let currentDayGroup = courseInfo['days'][i];
+
+            // Split the group of days into a string
+            let dayList = currentDayGroup.split()
+
+            for (let char in dayList) {
+
+              // This document name will be something like '11:40AM T' or '11:40AM R'
+              let docName = courseInfo['times'][i] + ' ' + char
+
+              let docData = {
+                course: courseInfo['course'],
+                name: courseInfo['name'],
+                section: courseInfo['section'][i]
+              }
+
+              promises.push(insertData(collectionsRef, docName, email, docData))
+
+            }
           }
-          //await classCollectionRef.doc(response[classes[i]]).collection('students').doc().set(data, { merge: true })
-          promises.push(insertData(classCollectionRef, response[classes[i]], data))
-        }
-        return Promise.all(promises);
+          Promise.all(promises)
+
+        })
       })
       .then(_ => resolve())
       .catch(err => reject(err));
@@ -46,5 +65,5 @@ function handleFormSubmission(email, url) {
 }
 
 module.exports = {
-  handleFormSubmission: handleFormSubmission
+  handleFormSubmission
 }

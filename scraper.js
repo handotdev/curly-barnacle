@@ -1,15 +1,7 @@
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
+/**  disable-eslint */
 
-const dayMapping = {
-  0: 'M',
-  1: 'T',
-  2: 'W',
-  3: 'R',
-  4: 'F',
-  5: 'S',
-  6: 'N' //Choosing N for Sunday, don't want to choose 2 letters because that makes parsing a tad bit trickier. 
-}
 function parseSchedule(id) {
   return new Promise((resolve, reject) => {
     const url = `https://classes.cornell.edu/shared/schedule/${id}`;
@@ -23,99 +15,67 @@ function parseSchedule(id) {
             return page.content();
           });
       })
-      .then(html => {
+      .then((html) => {
         const $ = cheerio.load(html);
-        const tableWrapper = $(".fc-content-skeleton");
 
-        //get table
-        const table = tableWrapper[0].children[0];
-        // get table body
-        const tableBody = table.children[0];
-        // get .tr class
-        const tr = tableBody.children[0];
-        // finally... get the content-carrying .tds 
-        const tdList = tr.children.slice(1);
-        let userCoursesData = []
-        let courseMapping = {}
-        for (const index in tdList) {
-          const tdEl = tdList[index];
+        // Initialize a map of classes on schedule indicating that it is a 
+        // selected class
+        const coursesMap = {};
+        const scheduleClasses = $('.fc-content');
+        // Loop through all classes on schedule
+        for (let i = 0; i < scheduleClasses.length; i++) {
+          const scheduleClass = scheduleClasses[i];
+          const courseCode = $(scheduleClass).children('span').first().text().trim();
 
-          // get .event-container
-          const eventContainer = tdEl.children[0].children[1];
-          eventContainer.children.forEach(child => {
-            if (child.name === 'a') { //we are now in the classlist .fc-time-grid-event.fc-v-event.fc-event.fc-start.fc-end
-              // Get class of 'fc-content'
-              const content = child.children[0];
-
-              // Get DOM of span with course code
-              const titleSpan = content.children[0];
-              // Retrieve value of course code
-              const course = titleSpan.children[0].data;
-
-              // Get DOM of span with course details
-              const detailsSpan = content.children[2];
-              // Identify DOM of section value
-              const sectionDOM = detailsSpan.children[0];
-              // Retrieve value of section
-              const section = sectionDOM.data;
-              // Identify DOM of times value
-              const timeDOM = detailsSpan.children[4];
-              // Retrieve value of time
-              const time = timeDOM.data;
-
-              if (`${course} ${section}` in courseMapping) {
-                courseMapping[`${course} ${section}`] += dayMapping[index]
-              } else {
-                courseMapping[`${course} ${section}`] = `${time} ${dayMapping[index]}`
-              }
-              const courseTime = {
-                course,
-                section,
-                time,
-                index
-              }
-              userCoursesData.push(courseTime)
-            }
-          })
+          if (!coursesMap[courseCode]) coursesMap[courseCode] = true;
         }
-        console.log(userCoursesData)
-        console.log(courseMapping);
-        resolve(courseMapping)
+
+        // Initialize list for class objects
+        let classList = []
+
+        const expander = $(".expander.ng-binding");
+        // Loops through all expanders
+        for (let i = 0; i < expander.length; i++) {
+          const courseHeader = expander[i];
+
+          // Grab course codes
+          courseCode = $(courseHeader.children[1]).text().trim();
+
+          // If the course is in the map on the schedule
+          if (coursesMap[courseCode]) {
+
+            // Initialize the class object
+            let classInfo = {}
+            classInfo['course'] = courseCode;
+
+            // Grab course name
+            courseNameRaw = $(courseHeader).text().trim();
+            courseName = courseNameRaw.split(' ').slice(2).join(" ");
+            classInfo['name'] = courseName;
+
+            // Grab section ids
+            const coursePinnedSection = $(courseHeader.parent.parent).find('.ng-binding.classnbr-pinned').toArray();
+            classInfo['section'] = coursePinnedSection.map(section => section.children[0].data.trim());
+
+            // Grab days for specific sections
+            const coursePinnedDays = $(courseHeader.parent.parent).find('.mtg-pat.classnbr-pinned').toArray();
+            classInfo['days'] = coursePinnedDays.map(day => $(day.children[2]).text().trim());
+
+            // Grab times for specific sections
+            const coursePinnedTimes = $(courseHeader.parent.parent).find('.mtg-time.classnbr-pinned').toArray();
+            classInfo['times'] = coursePinnedTimes.map(time => $(time.children[2]).text().trim());
+
+            // Add to class list
+            classList.push(classInfo);
+
+          }
+        }
+        resolve(classList)
       })
       .catch(err => reject(err))
   })
 }
 
-function parse2(id) {
-  return new Promise((resolve, reject) => {
-    const url = `https://classes.cornell.edu/shared/schedule/${id}`;
-
-    puppeteer
-      .launch()
-      .then(browser => browser.newPage())
-      .then(page => {
-        return page.goto(url)
-          .then(() => {
-            return page.content();
-          });
-      })
-      .then(html => {
-        const $ = cheerio.load(html);
-        const expander = $(".expander.ng-binding");
-
-        // Loops through all expanders
-        for (let i = 0; i < expander.length; i++) {
-          const courseHeader = expander[i];
-          courseCode = courseHeader.children[1].children[0].data;
-          console.log(courseCode);
-        }
-
-        
-        
-      })
-  })
-}
-
 module.exports = {
-  parseSchedule: parse2
+  parseSchedule
 }
