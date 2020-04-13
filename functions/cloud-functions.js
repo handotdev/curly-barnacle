@@ -28,21 +28,21 @@ function getRegularTime(hours, minutes) {
   let xm;
   if (hours >= 12) {
     hoursPrefix = `${(hours >= 13 ? hours % 12 : hours)}`;
-    xm = 'PM'
+    xm = 'PM';
     if (hours >= 13 && hours < 22) {
-      hoursPrefix = '0' + hoursPrefix
+      hoursPrefix = '0' + hoursPrefix;
     }
   } else {
-    hoursPrefix = `${hours}`
-    xm = 'AM'
+    hoursPrefix = `${hours}`;
+    xm = 'AM';
     if (hours >= 0 && hours < 10) {
-      hoursPrefix = '0' + hoursPrefix
+      hoursPrefix = '0' + hoursPrefix;
     }
   }
 
-  const minutesPadded = (minutes >= 0 && minutes < 10) ? ('0' + minutes) : minutes
+  const minutesPadded = (minutes >= 0 && minutes < 10) ? ('0' + minutes) : minutes;
 
-  return `${hoursPrefix}:${minutesPadded}${xm}`
+  return `${hoursPrefix}:${minutesPadded}${xm}`;
 }
 
 /**
@@ -52,31 +52,36 @@ function getRegularTime(hours, minutes) {
 function findNextPossibleClassTime() {
   const coeff = 1000 * 60 * 5;
   const date = new Date(Date.now());
-  const rounded = new Date(Math.round(date.getTime() / coeff) * coeff)
-  return `${DayMapping[rounded.getDay()]} ${getRegularTime(rounded.getHours(), rounded.getMinutes())}`
+  const rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
+  return `${DayMapping[rounded.getDay()]} ${getRegularTime(rounded.getHours(), rounded.getMinutes())}`;
 }
 
 const sendEmails = async () => {
 
-  // find the time to search Firebase for
+  // Find the time to search Firebase for
   const docToSearch = findNextPossibleClassTime();
-  let promises = []
+
+  // Initialize promises array
+  let promises = [];
+
   await firebaseDB.db
     .collection('classList')
+    // Find the current time's document
     .doc(docToSearch)
     .collection('students')
+    // get all documents
     .get()
     .then(querySnapshot => {
       querySnapshot.docs.forEach(doc => {
         const email = doc.id;
         const classDetails = doc.data();
         const classCode = classDetails.course;
-        const className = classDetails.name
-        const classSection = classDetils.section
+        const className = classDetails.name;
+        const classSection = classDetils.section;
         promises.push(emailUtil.send(email, classCode, className, classSection));
       })
 
-      Promise.all(promises)
+      Promise.all(promises);
     })
     .catch(err => console.log(err))
 
