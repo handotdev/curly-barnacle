@@ -7,4 +7,3 @@ function findNextPossibleClassTime() {
   return rounded.toString()
 }
 
-console.log(findNextPossibleClassTime())
