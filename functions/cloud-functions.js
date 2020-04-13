@@ -78,7 +78,7 @@ const sendEmails = async () => {
         const classCode = classDetails.course;
         const className = classDetails.name;
         const classSection = classDetils.section;
-        promises.push(emailUtil.send(email, classCode, className, classSection));
+        promises.push(emailUtil.send(email, classCode, className, classSection, 'http://google.com'));
       })
 
       Promise.all(promises);
@@ -86,4 +86,4 @@ const sendEmails = async () => {
     .catch(err => console.log(err))
 
 }
-console.log(findNextPossibleClassTime());
+//console.log(findNextPossibleClassTime());
