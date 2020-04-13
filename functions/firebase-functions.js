@@ -1,4 +1,3 @@
-// const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const scraper = require('../scraper.js');
 //import * as async from 'async'
@@ -41,7 +40,7 @@ function handleFormSubmission(email, id) {
             if (currentTime.length > 0) {
               for (let j = 0; j < currentDayGroup.length; j += 1) {
 
-                // Consider for Sunday edge case ('Su'), this will never be out of bounds because sunday is always at the end
+                // Consider for Sunday edge case ('Su')
                 const isSunday = currentDayGroup.charAt(j) === 'S' && currentDayGroup.charAt(j + 1) === 'u';
 
                 // This document name will be something like '11:40AM T' or '11:40AM R'

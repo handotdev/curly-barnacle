@@ -1,3 +1,5 @@
+const functions = require('firebase-functions');
+
 function findNextPossibleClassTime() {
   var coeff = 1000 * 60 * 5;
   var date = new Date(Date.now());
@@ -5,3 +7,4 @@ function findNextPossibleClassTime() {
   return rounded.toString()
 }
 
+console.log(findNextPossibleClassTime())
