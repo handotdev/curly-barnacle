@@ -44,6 +44,7 @@ function handleFormSubmission(email, url) {
               // This document name will be something like '11:40AM T' or '11:40AM R'
               let docName = courseInfo['times'][i] + ' ' + currentDayGroup.charAt(j)
 
+              // Store what will go insde the document for a specific email (which is, obviously, in a specific time slot)
               let docData = {
                 course: courseInfo['course'],
                 name: courseInfo['name'],
