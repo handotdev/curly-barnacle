@@ -36,24 +36,24 @@ function handleFormSubmission(email, id) {
             // Get the string containing the group of days this class takes place
             let currentDayGroup = courseInfo['days'][i];
             let currentTime = courseInfo['times'][i];
-            
+
             // Filter out classes without times
             if (currentTime.length > 0) {
               for (let j = 0; j < currentDayGroup.length; j += 1) {
 
-                // Consider for Sunday edge case ('Su')
-                const isSunday = currentDayGroup.charAt(j) === 'S' && currentDayGroup.charAt(j+1) === 'u';
-  
+                // Consider for Sunday edge case ('Su'), this will never be out of bounds because sunday is always at the end
+                const isSunday = currentDayGroup.charAt(j) === 'S' && currentDayGroup.charAt(j + 1) === 'u';
+
                 // This document name will be something like '11:40AM T' or '11:40AM R'
                 // Account for "Su" as in Sunday
                 const docName = `${(isSunday) ? 'Su' : currentDayGroup.charAt(j)} ${courseInfo['times'][i]}`;
-  
+
                 const docData = {
                   course: courseInfo['course'],
                   name: courseInfo['name'],
                   section: courseInfo['section'][i]
                 }
-  
+
                 // Increment if it is Sunday
                 if (isSunday) j++;
 
