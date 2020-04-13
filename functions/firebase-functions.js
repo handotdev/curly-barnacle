@@ -10,13 +10,16 @@ admin.initializeApp({
 let db = admin.firestore()
 
 const insertData = (collectionsRef, docName, email, docData) => {
-  return new Promise((resolve, reject) => {
-    collectionsRef
-      .doc(docName)
-      .collection('students')
+  return new Promise(async (resolve, reject) => {
+    let docRef = collectionsRef.doc(docName)
+    await docRef.set({ dummy: 'dummy' })
+    docRef.collection('students')
       .doc(email)
       .set(docData)
-      .then(() => resolve(true))
+      .then(() => {
+        docRef.update({ dummy: admin.firestore.FieldValue.delete() })
+        resolve(true)
+      })
       .catch(err => reject(err))
   })
 }
@@ -69,7 +72,34 @@ function handleFormSubmission(email, id) {
   })
 }
 
+function deleteUser(email) {
+  return new Promise((resolve, reject) => {
+    db
+      .collection('classTimes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const time = doc.id
+          doc.ref
+            .collection('students')
+            .get()
+            .then(querySnapshotForStudents => {
+              querySnapshotForStudents.forEach(async (student) => {
+                if (student.id === email) {
+                  await student.ref.delete().catch(err => console.log(err))
+                }
+              })
+            })
+            .catch(err => reject(err))
+        })
+        resolve()
+      })
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = {
   db,
-  handleFormSubmission
+  handleFormSubmission,
+  deleteUser
 }
