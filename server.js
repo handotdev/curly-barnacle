@@ -13,7 +13,7 @@ app.get('/api/schedule', (req, res) => {
 })
 
 const PORT = 3333;
-functions.deleteUser('hyw2@cornell.edu')
+// functions.deleteUser('hyw2@cornell.edu');
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
