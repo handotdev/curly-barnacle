@@ -16,7 +16,7 @@ const insertData = (collectionsRef, docName, email, docData) => {
       .doc(docName)
       .collection('students')
       .doc(email)
-      .set(docData, { merge: true })
+      .set(docData)
       .then(_ => resolve())
       .catch(err => reject(err))
   })
@@ -30,7 +30,7 @@ function handleFormSubmission(email, url) {
 
     scraper.parseSchedule(id)
       .then(async (response) => {
-        console.log(response)
+        // console.log(response)
         const collectionsRef = await db.collection('classTimes');
         let promises = []
         response.forEach(courseInfo => {
@@ -49,7 +49,6 @@ function handleFormSubmission(email, url) {
                 name: courseInfo['name'],
                 section: courseInfo['section'][i]
               }
-
               promises.push(insertData(collectionsRef, docName, email, docData))
             }
           }
