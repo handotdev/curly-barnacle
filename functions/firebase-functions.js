@@ -17,7 +17,7 @@ const insertData = (collectionsRef, docName, email, docData) => {
       .collection('students')
       .doc(email)
       .set(docData)
-      .then(_ => resolve())
+      .then(() => resolve(true))
       .catch(err => reject(err))
   })
 }
@@ -27,7 +27,7 @@ function handleFormSubmission(email, id) {
 
     scraper.parseSchedule(id)
       .then(async (response) => {
-        // console.log(response)
+        if (response.length === 0) reject("Invalid URL");
         const collectionsRef = await db.collection('classTimes');
         let promises = []
         response.forEach(courseInfo => {
@@ -62,10 +62,10 @@ function handleFormSubmission(email, id) {
               }
             }
           }
-          Promise.all(promises)
+          Promise.all(promises).then(() => resolve(true))
         })
       })
-      .then(_ => resolve())
+      .then(() => resolve(true))
       .catch(err => reject(err));
   })
 }
