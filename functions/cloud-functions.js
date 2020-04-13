@@ -56,7 +56,29 @@ function findNextPossibleClassTime() {
   return `${DayMapping[rounded.getDay()]} ${getRegularTime(rounded.getHours(), rounded.getMinutes())}`
 }
 
-const sendEmails = () => {
+const sendEmails = async () => {
+
+  // find the time to search Firebase for
+  const docToSearch = findNextPossibleClassTime();
+  let promises = []
+  await firebaseDB.db
+    .collection('classList')
+    .doc(docToSearch)
+    .collection('students')
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.docs.forEach(doc => {
+        const email = doc.id;
+        const classDetails = doc.data();
+        const classCode = classDetails.course;
+        const className = classDetails.name
+        const classSection = classDetils.section
+        promises.push(emailUtil.send(email, classCode, className, classSection));
+      })
+
+      Promise.all(promises)
+    })
+    .catch(err => console.log(err))
 
 }
 console.log(findNextPossibleClassTime());

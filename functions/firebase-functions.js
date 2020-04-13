@@ -70,5 +70,6 @@ function handleFormSubmission(email, id) {
 }
 
 module.exports = {
+  db,
   handleFormSubmission
 }
