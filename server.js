@@ -8,8 +8,8 @@ app.use(cors());
 app.get('/api/schedule', (req, res) => {
     const { email, id } = req.query;
     functions.handleFormSubmission(email, id)
-        .then(_ => res.send('success'))
-        .catch(err => console.log(err))
+        .then((status) => res.send({success: status}))
+        .catch((error) => res.send({success: false, error}))
 })
 
 const PORT = 3000;
