@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+// const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const scraper = require('../scraper.js');
 //import * as async from 'async'
@@ -22,11 +22,8 @@ const insertData = (collectionsRef, docName, email, docData) => {
   })
 }
 
-function handleFormSubmission(email, url) {
+function handleFormSubmission(email, id) {
   return new Promise((resolve, reject) => {
-    const splitter = 'schedule/'
-    const indexSp = url.indexOf(splitter);
-    const id = url.slice(indexSp + splitter.length);
 
     scraper.parseSchedule(id)
       .then(async (response) => {
@@ -38,19 +35,31 @@ function handleFormSubmission(email, url) {
 
             // Get the string containing the group of days this class takes place
             let currentDayGroup = courseInfo['days'][i];
+            let currentTime = courseInfo['times'][i];
 
-            for (let j = 0; j < currentDayGroup.length; j += 1) {
+            // Filter out classes without times
+            if (currentTime.length > 0) {
+              for (let j = 0; j < currentDayGroup.length; j += 1) {
 
-              // This document name will be something like '11:40AM T' or '11:40AM R'
-              let docName = courseInfo['times'][i] + ' ' + currentDayGroup.charAt(j)
+                // Consider for Sunday edge case ('Su'), this will never be out of bounds because sunday is always at the end
+                const isSunday = currentDayGroup.charAt(j) === 'S' && currentDayGroup.charAt(j + 1) === 'u';
 
-              // Store what will go insde the document for a specific email (which is, obviously, in a specific time slot)
-              let docData = {
-                course: courseInfo['course'],
-                name: courseInfo['name'],
-                section: courseInfo['section'][i]
+                // This document name will be something like '11:40AM T' or '11:40AM R'
+                // Account for "Su" as in Sunday
+                const docName = `${(isSunday) ? 'Su' : currentDayGroup.charAt(j)} ${courseInfo['times'][i]}`;
+
+                const docData = {
+                  course: courseInfo['course'],
+                  name: courseInfo['name'],
+                  section: courseInfo['section'][i]
+                }
+
+                // Increment if it is Sunday
+                if (isSunday) j++;
+
+                // Add data to firebase
+                promises.push(insertData(collectionsRef, docName, email, docData))
               }
-              promises.push(insertData(collectionsRef, docName, email, docData))
             }
           }
           Promise.all(promises)
