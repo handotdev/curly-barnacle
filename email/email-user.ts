@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
+const template = require('./email-template.js')
 
-async function send() {
+async function send(email, className, classSection, zoomLink) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -10,10 +11,10 @@ async function send() {
   });
 
   const mailOptions = {
-    from: 'anshgodha714@gmail.com',
-    to: 'hyw2@cornell.edu, rf382@cornell.edu, anshgodha714@gmail.com',
-    subject: 'Test email with Nodemailer!',
-    text: "if this works, I'm going to be happy :)",
+    from: '<curly-barnacle>@gmail.com',
+    to: email,
+    subject: 'Your class is about to start!',
+    text: template.generateHTML(className, classSection, zoomLink),
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -25,5 +26,4 @@ async function send() {
     }
   });
 }
-
-send().catch(console.error);
+// send().catch(console.error);
