@@ -38,7 +38,7 @@ export class Fields extends Component {
 
     // Retrieve schedule info from API
     axios
-      .get(`http://localhost:5000/api/schedule?email=${email}&id=${schedulerId}`)
+      .get(`http://localhost:3333/api/schedule?email=${email}&id=${schedulerId}`)
       .then((res) => {
         this.setState({ loading: false });
         if (res.data.success) {

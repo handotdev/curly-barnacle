@@ -1,4 +1,3 @@
-// const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const scraper = require('../scraper.js');
 //import * as async from 'async'
@@ -11,13 +10,16 @@ admin.initializeApp({
 let db = admin.firestore()
 
 const insertData = (collectionsRef, docName, email, docData) => {
-  return new Promise((resolve, reject) => {
-    collectionsRef
-      .doc(docName)
-      .collection('students')
+  return new Promise(async (resolve, reject) => {
+    let docRef = collectionsRef.doc(docName)
+    await docRef.set({ dummy: 'dummy' })
+    docRef.collection('students')
       .doc(email)
       .set(docData)
-      .then(() => resolve(true))
+      .then(() => {
+        docRef.update({ dummy: admin.firestore.FieldValue.delete() })
+        resolve(true)
+      })
       .catch(err => reject(err))
   })
 }
@@ -41,7 +43,7 @@ function handleFormSubmission(email, id) {
             if (currentTime.length > 0) {
               for (let j = 0; j < currentDayGroup.length; j += 1) {
 
-                // Consider for Sunday edge case ('Su'), this will never be out of bounds because sunday is always at the end
+                // Consider for Sunday edge case ('Su')
                 const isSunday = currentDayGroup.charAt(j) === 'S' && currentDayGroup.charAt(j + 1) === 'u';
 
                 // This document name will be something like '11:40AM T' or '11:40AM R'
@@ -70,6 +72,34 @@ function handleFormSubmission(email, id) {
   })
 }
 
+function deleteUser(email) {
+  return new Promise((resolve, reject) => {
+    db
+      .collection('classTimes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const time = doc.id
+          doc.ref
+            .collection('students')
+            .get()
+            .then(querySnapshotForStudents => {
+              querySnapshotForStudents.forEach(async (student) => {
+                if (student.id === email) {
+                  await student.ref.delete().catch(err => console.log(err))
+                }
+              })
+            })
+            .catch(err => reject(err))
+        })
+        resolve()
+      })
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = {
-  handleFormSubmission
+  db,
+  handleFormSubmission,
+  deleteUser
 }
