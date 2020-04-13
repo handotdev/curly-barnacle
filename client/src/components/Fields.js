@@ -45,7 +45,8 @@ export class Fields extends Component {
           message.success(`Successfully signed up with ${this.state.email}`);
           console.log(res.data.data);
         } else {
-          message.error('Invalid Scheduler URL');
+          const errorMsg = (res.data.message) ? res.data.message : 'Enable to sign up at the moment. Please try again later'
+          message.error(errorMsg);
         }
       })
       .catch(() => {

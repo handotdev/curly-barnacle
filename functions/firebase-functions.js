@@ -27,7 +27,7 @@ function handleFormSubmission(email, id) {
 
     scraper.parseSchedule(id)
       .then(async (response) => {
-        if (response.length === 0) reject("Invalid URL");
+        if (response.length === 0) reject("Invalid Schedule URL");
         const collectionsRef = await db.collection('classTimes');
         let promises = []
         response.forEach(courseInfo => {

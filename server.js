@@ -9,10 +9,10 @@ app.get('/api/schedule', (req, res) => {
     const { email, id } = req.query;
     functions.handleFormSubmission(email, id)
         .then((status) => res.send({success: status}))
-        .catch((error) => res.send({success: false, error}))
+        .catch((error) => res.send({success: false, message: error}))
 })
 
-const PORT = 3000;
+const PORT = 5000;
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
