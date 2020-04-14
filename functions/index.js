@@ -1,10 +1,10 @@
 const functions = require('firebase-functions');
 const emailUtil = require('./email/email-user.ts')
-const firebaseAdmin = require('./db-config.js')
+const firebase = require('./db-config.js')
 const moment = require('moment-timezone');
 
 
-const db = firebaseAdmin.firestore()
+const db = firebase.admin.firestore()
 /**
  * DayMapping is an enumeration that maps the day indices (as returned by the
  * .getDay() function for the `Date` object) to either a one or a two character
@@ -64,39 +64,41 @@ const sendEmails = async () => {
 
   // Find the time to search Firebase for
   const docToSearch = findNextPossibleClassTime();
-
+  //const docToSearch = 'T 10:10AM'
+  console.log(docToSearch)
   // Initialize promises array
   let promises = [];
 
   await db
-    .collection('classList')
+    .collection('classTimes')
     // Find the current time's document
     .doc(docToSearch)
     .collection('students')
     // get all documents
     .get()
     .then(querySnapshot => {
+      console.log(querySnapshot.docs)
       querySnapshot.docs.forEach(async (doc) => {
         const email = doc.id;
         const classDetails = doc.data();
+        console.log(classDetails)
         const classCode = classDetails.course;
         const className = classDetails.name;
-        const classSection = classDetils.section;
+        const classSection = classDetails.section;
 
         // Store the reference to the document corresponding to the class code
         const classRef = db.collection('zoomLinks').doc(classCode);
         await classRef
           .get()
-          .then(snapshot => {
+          .then(linkdoc => {
             // If class exists
-            if (snapshot.exists) {
-              classRef.onSnapshot(doc => {
-                const link = doc.data()[classSection];
-                // Check if there's a link for that specific section
-                if (link !== undefined) {
-                  promises.push(emailUtil.send(email, classCode, className, classSection, link));
-                }
-              });
+            console.log(linkdoc)
+            if (linkdoc.exists) {
+              const link = linkdoc.data()[classSection];
+              // Check if there's a link for that specific section
+              if (link !== undefined) {
+                promises.push(emailUtil.send(email, classCode, className, classSection, link));
+              }
             }
             return true
           })
@@ -111,7 +113,6 @@ const sendEmails = async () => {
 exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
   .timeZone('America/New_York')
   .onRun(async (context) => {
+    console.log('sending emails')
     await sendEmails()
   })
-
-console.log(findNextPossibleClassTime())
