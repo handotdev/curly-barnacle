@@ -1,10 +1,10 @@
 const functions = require('firebase-functions');
 const emailUtil = require('./email/email-user.ts')
-const firebaseDB = require('./db-config.js')
+const firebaseAdmin = require('./db-config.js')
 const moment = require('moment-timezone');
 
 
-const db = firebaseDB.db
+const db = firebaseAdmin.firestore()
 /**
  * DayMapping is an enumeration that maps the day indices (as returned by the
  * .getDay() function for the `Date` object) to either a one or a two character

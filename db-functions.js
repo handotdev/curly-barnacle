@@ -1,7 +1,8 @@
 let scraper = require('./scraper.js');
 let firebase = require('./functions/db-config')
 
-const db = firebase.db
+const db = firebase.admin.firestore()
+
 
 const insertData = (collectionsRef, docName, email, docData) => {
   return new Promise((resolve, reject) => {
@@ -11,7 +12,7 @@ const insertData = (collectionsRef, docName, email, docData) => {
       .doc(email)
       .set(docData)
       .then(() => {
-        docRef.update({ dummy: admin.firestore.FieldValue.delete() })
+        docRef.update({ dummy: firebase.admin.firestore.FieldValue.delete() })
         resolve(true)
       })
       .catch(err => reject(err))
