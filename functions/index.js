@@ -1,7 +1,10 @@
 const functions = require('firebase-functions');
-const emailUtil = require('../email/email-user.ts')
-const firebaseDB = require('./firebase-functions.js')
+const emailUtil = require('./email/email-user.ts')
+const firebaseDB = require('./db-config.js')
+const moment = require('moment-timezone');
 
+
+const db = firebaseDB.db
 /**
  * DayMapping is an enumeration that maps the day indices (as returned by the
  * .getDay() function for the `Date` object) to either a one or a two character
@@ -52,8 +55,9 @@ function getRegularTime(hours, minutes) {
 function findNextPossibleClassTime() {
   const coeff = 1000 * 60 * 5;
   const date = new Date(Date.now());
-  const rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
-  return `${DayMapping[rounded.getDay()]} ${getRegularTime(rounded.getHours(), rounded.getMinutes())}`;
+  let rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
+  const estDate = moment(rounded).tz('America/New_York');
+  return `${DayMapping[estDate.day()]} ${getRegularTime(estDate.hours(), estDate.minutes())}`;
 }
 
 const sendEmails = async () => {
@@ -64,7 +68,7 @@ const sendEmails = async () => {
   // Initialize promises array
   let promises = [];
 
-  await firebaseDB.db
+  await db
     .collection('classList')
     // Find the current time's document
     .doc(docToSearch)
@@ -72,18 +76,42 @@ const sendEmails = async () => {
     // get all documents
     .get()
     .then(querySnapshot => {
-      querySnapshot.docs.forEach(doc => {
+      querySnapshot.docs.forEach(async (doc) => {
         const email = doc.id;
         const classDetails = doc.data();
         const classCode = classDetails.course;
         const className = classDetails.name;
         const classSection = classDetils.section;
-        promises.push(emailUtil.send(email, classCode, className, classSection, 'http://google.com'));
-      })
 
-      Promise.all(promises);
+        // Store the reference to the document corresponding to the class code
+        const classRef = db.collection('zoomLinks').doc(classCode);
+        await classRef
+          .get()
+          .then(snapshot => {
+            // If class exists
+            if (snapshot.exists) {
+              classRef.onSnapshot(doc => {
+                const link = doc.data()[classSection];
+                // Check if there's a link for that specific section
+                if (link !== undefined) {
+                  promises.push(emailUtil.send(email, classCode, className, classSection, link));
+                }
+              });
+            }
+            return true
+          })
+          .catch(err => console.log(err))
+      })
+      Promise.all(promises).catch(err => console.log(err));
+      return true
     })
     .catch(err => console.log(err))
-
 }
-//console.log(findNextPossibleClassTime());
+
+exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
+  .timeZone('America/New_York')
+  .onRun(async (context) => {
+    await sendEmails()
+  })
+
+console.log(findNextPossibleClassTime())

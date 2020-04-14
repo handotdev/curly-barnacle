@@ -1,24 +1,18 @@
-const admin = require('firebase-admin');
-const scraper = require('../scraper.js');
-//import * as async from 'async'
+let scraper = require('./scraper.js');
+let firebase = require('./functions/db-config')
 
-let serviceAccount = require('./service-account.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-let db = admin.firestore()
+const db = firebase.db
 
 const insertData = (collectionsRef, docName, email, docData) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     let docRef = collectionsRef.doc(docName)
-    await docRef.set({ dummy: 'dummy' })
+    docRef.set({ dummy: 'dummy' })
     docRef.collection('students')
       .doc(email)
       .set(docData)
       .then(() => {
         docRef.update({ dummy: admin.firestore.FieldValue.delete() })
-        resolve(true)
+        return resolve(true)
       })
       .catch(err => reject(err))
   })
@@ -29,9 +23,9 @@ function handleFormSubmission(email, id) {
 
     scraper.parseSchedule(id)
       .then(async (response) => {
-        if (response.length === 0) reject("Invalid Schedule URL");
+        if (response.length === 0) throw Error("no responses");
         const collectionsRef = await db.collection('classTimes');
-        let promises = []
+        let promises = [];
         response.forEach(courseInfo => {
           for (let i = 0; i < courseInfo['days'].length; i += 1) {
 
@@ -64,10 +58,10 @@ function handleFormSubmission(email, id) {
               }
             }
           }
-          Promise.all(promises).then(() => resolve(true))
         })
+        return Promise.all(promises).then(() => resolve(true))
       })
-      .then(() => resolve(true))
+      .then(() => { return resolve(true) })
       .catch(err => reject(err));
   })
 }
@@ -84,7 +78,7 @@ function deleteUser(email) {
             .collection('students')
             .get()
             .then(querySnapshotForStudents => {
-              querySnapshotForStudents.forEach(async (student) => {
+              return querySnapshotForStudents.forEach(async (student) => {
                 if (student.id === email) {
                   await student.ref.delete().catch(err => console.log(err))
                 }
@@ -92,14 +86,13 @@ function deleteUser(email) {
             })
             .catch(err => reject(err))
         })
-        resolve()
+        return resolve(true)
       })
       .catch(err => reject(err))
   })
 }
 
 module.exports = {
-  db,
   handleFormSubmission,
   deleteUser
 }

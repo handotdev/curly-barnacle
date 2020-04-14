@@ -3,7 +3,7 @@ const serviceAccount = require('./service-account.json');
 
 // Initialize firebase firestore credentials
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount)
 });
 let db = admin.firestore();
 
@@ -14,13 +14,13 @@ function setLinks(zoomLinks) {
     entries.forEach(([course, links]) => {
         const collectionsRef = db.collection('zoomLinks');
         // {merge:true} is very important to allow for overriding
-        promises.push(collectionsRef.doc(course).set(links, {merge: true}).then(() => {
-            console.log("Successfully set links for " + course);
+        promises.push(collectionsRef.doc(course).set(links, { merge: true }).then(() => {
+            return console.log("Successfully set links for " + course);
         }));
     })
     Promise.all(promises).then(() => {
-        console.log("All courses set successfully");
-    })
+        return console.log("All courses set successfully");
+    }).catch(err => err)
 }
 
 // Zoom links to set/update the database. 
