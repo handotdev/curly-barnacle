@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Form, Input, Button, Tooltip, message } from 'antd';
+import { Form, Input, Button, Tooltip, message as Message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 import './Fields.css';
@@ -40,18 +40,19 @@ export class Fields extends Component {
     axios
       .get(`http://localhost:3333/api/schedule?email=${email}&id=${schedulerId}`)
       .then((res) => {
+        console.log(res);
         this.setState({ loading: false });
         if (res.data.success) {
-          message.success(`Successfully signed up with ${this.state.email}`);
+          Message.success(`Successfully signed up with ${this.state.email}`);
           console.log(res.data.data);
         } else {
-          const errorMsg = (res.data.message) ? res.data.message : 'Enable to sign up at the moment. Please try again later'
-          message.error(errorMsg);
+          const errorMsg = (res && res.data.message) ? res.data.message : 'Enable to sign up at the moment. Please try again later'
+          Message.error(errorMsg);
         }
       })
       .catch(() => {
         this.setState({ loading: false });
-        message.error(
+        Message.error(
           'Enable to sign up at the moment. Please try again later'
         );
       });

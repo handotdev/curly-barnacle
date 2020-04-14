@@ -12,7 +12,7 @@ const insertData = (collectionsRef, docName, email, docData) => {
       .set(docData)
       .then(() => {
         docRef.update({ dummy: admin.firestore.FieldValue.delete() })
-        return resolve(true)
+        resolve(true)
       })
       .catch(err => reject(err))
   })
@@ -23,7 +23,7 @@ function handleFormSubmission(email, id) {
 
     scraper.parseSchedule(id)
       .then(async (response) => {
-        if (response.length === 0) throw Error("no responses");
+        if (response.length === 0) reject("Invalid Schedule URL");
         const collectionsRef = await db.collection('classTimes');
         let promises = [];
         response.forEach(courseInfo => {
@@ -53,15 +53,16 @@ function handleFormSubmission(email, id) {
                 // Increment if it is Sunday
                 if (isSunday) j++;
 
+                console.log(docData);
                 // Add data to firebase
                 promises.push(insertData(collectionsRef, docName, email, docData))
               }
             }
           }
         })
-        return Promise.all(promises).then(() => resolve(true))
+        Promise.all(promises).then(() => resolve(true))
       })
-      .then(() => { return resolve(true) })
+      .then(() => { resolve(true) })
       .catch(err => reject(err));
   })
 }
@@ -86,7 +87,7 @@ function deleteUser(email) {
             })
             .catch(err => reject(err))
         })
-        return resolve(true)
+        resolve(true)
       })
       .catch(err => reject(err))
   })
