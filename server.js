@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express();
 const cors = require('cors');
-const functions = require('./db-functions.js')
+const functions = require('./db-functions.js');
 
 app.use(cors());
 

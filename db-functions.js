@@ -1,7 +1,7 @@
 let scraper = require('./scraper.js');
-let firebase = require('./functions/db-config')
+let firebase = require('./functions/db-config');
 
-const db = firebase.admin.firestore()
+const db = firebase.admin.firestore();
 
 
 const insertData = (collectionsRef, docName, email, docData) => {
@@ -95,6 +95,7 @@ function deleteUser(email) {
 }
 
 module.exports = {
+  insertData,
   handleFormSubmission,
   deleteUser
 }
