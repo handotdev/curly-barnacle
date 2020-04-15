@@ -1,12 +1,17 @@
-function generateHTML(classCode, className, sectionName, zoomLink) {
+function generateHTML(classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif") {
   return (
     `
-  <p>Hello there!</p>
   <p>
-    You have a class coming up - ${classCode}, ${className}, ${sectionName}. The Zoom link for the class
-    is:
+    Your next class: <strong>${classCode} (${className}) Section ${sectionName}</strong> is starting in <strong>10 minutes</stron>!
   </p>
-  <a href="${zoomLink}">${zoomLink}</a>`
+  <p>
+    ${zoomLink ? `Access your class at: <a href="${zoomLink}">${zoomLink}</a>` :
+      `We unfortunately don't have a zoom link for this class right now 😢<br>
+      But you can tell us <a href="https://docs.google.com/forms/d/e/1FAIpQLSfIr_-DglAuOSA7Z7YbRW-e41tVZQdAtR6W1PxJly_hkEQeaQ/viewform?usp=pp_url&entry.366340186=${classCode.split(' ').join('+')}&entry.805749716=${sectionName.split(' ').join('+')}">here</a> so we can send this to you in the future!`
+    }
+  </p>
+  <img src="${gif}">
+  `
   )
 }
 
