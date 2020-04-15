@@ -1,20 +1,23 @@
 const nodemailer = require('nodemailer');
 const template = require('./email-template.js')
 
-async function send(email, classCode, className, classSection, zoomLink) {
+function send(email, classCode, className, classSection, zoomLink) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: '<curly-barnacle>@gmail.com',
-      pass: '<curliest-barnacles>',
+      user: 'curlybarnacles3333@gmail.com',
+      pass: 'barnaclesarecurly',
     },
   });
 
   const mailOptions = {
-    from: '<curly-barnacle>@gmail.com',
+    from: 'curlybarnacles3333@gmail.com',
     to: email,
     subject: 'Your class is about to start!',
-    text: template.generateHTML(classCode, className, classSection, zoomLink),
+    html: template.generateHTML(classCode, className, classSection, zoomLink),
+    headers: {
+      'X-Entity-Ref-ID': null
+    }
   };
 
   return new Promise((resolve, reject) => {
@@ -31,3 +34,7 @@ async function send(email, classCode, className, classSection, zoomLink) {
   })
 }
 // send().catch(console.error);
+
+module.exports = {
+  send
+}
