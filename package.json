@@ -24,6 +24,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "axios": "^0.19.2",
+    "backendless": "^5.8.8",
     "cheerio": "^1.0.0-rc.3",
     "concurrently": "^5.1.0",
     "cors": "^2.8.5",

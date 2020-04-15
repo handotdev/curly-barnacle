@@ -4,9 +4,9 @@ let firebase = require('./functions/db-config');
 const db = firebase.admin.firestore();
 
 
-const insertData = (collectionsRef, docName, email, docData) => {
+const insertData = (collectionsRef, time, email, docData) => {
   return new Promise((resolve, reject) => {
-    let docRef = collectionsRef.doc(docName)
+    let docRef = collectionsRef.doc(time)
     docRef.set({ dummy: 'dummy' })
     docRef.collection('students')
       .doc(email)

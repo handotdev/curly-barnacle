@@ -32,15 +32,13 @@ function getRegularTime(hours, minutes) {
   if (hours >= 12) {
     hoursPrefix = `${(hours >= 13 ? hours % 12 : hours)}`;
     xm = 'PM';
-    if (hours >= 13 && hours < 22) {
-      hoursPrefix = '0' + hoursPrefix;
-    }
   } else {
-    hoursPrefix = `${hours}`;
-    xm = 'AM';
-    if (hours >= 0 && hours < 10) {
-      hoursPrefix = '0' + hoursPrefix;
+    if (hours === 0) {
+      hoursPrefix = '12'
+    } else {
+      hoursPrefix = `${hours}`;
     }
+    xm = 'AM';
   }
 
   const minutesPadded = (minutes >= 0 && minutes < 10) ? ('0' + minutes) : minutes;
@@ -54,9 +52,16 @@ function getRegularTime(hours, minutes) {
  */
 function findNextPossibleClassTime() {
   const coeff = 1000 * 60 * 5;
+  //get current datetime
   const date = new Date(Date.now());
+
+  // round to the nearest 5 minutes
   let rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
-  const estDate = moment(rounded).tz('America/New_York');
+
+  // Convert to EST, search 10 minutes ahead
+  const estDate = moment(rounded).add(10, 'm').tz('America/New_York');
+
+  // convert to our document id format
   return `${DayMapping[estDate.day()]} ${getRegularTime(estDate.hours(), estDate.minutes())}`;
 }
 
@@ -64,8 +69,6 @@ const sendEmails = async () => {
 
   // Find the time to search Firebase for
   const docToSearch = findNextPossibleClassTime();
-  //const docToSearch = 'T 10:10AM'
-  console.log(docToSearch)
   // Initialize promises array
   let promises = [];
 
@@ -77,11 +80,9 @@ const sendEmails = async () => {
     // get all documents
     .get()
     .then(querySnapshot => {
-      console.log(querySnapshot.docs)
       querySnapshot.docs.forEach(async (doc) => {
         const email = doc.id;
         const classDetails = doc.data();
-        console.log(classDetails)
         const classCode = classDetails.course;
         const className = classDetails.name;
         const classSection = classDetails.section;
@@ -92,13 +93,11 @@ const sendEmails = async () => {
           .get()
           .then(linkdoc => {
             // If class exists
-            console.log(linkdoc)
             if (linkdoc.exists) {
               const link = linkdoc.data()[classSection];
-              // Check if there's a link for that specific section
-              if (link !== undefined) {
-                promises.push(emailUtil.send(email, classCode, className, classSection, link));
-              }
+              promises.push(emailUtil.send(email, classCode, className, classSection, link));
+            } else {
+              promises.push(emailUtil.send(email, classCode, className, classSection, undefined));
             }
             return true
           })
@@ -116,3 +115,5 @@ exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
     console.log('sending emails')
     await sendEmails()
   })
+
+sendEmails()
