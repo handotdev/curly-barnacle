@@ -8,8 +8,8 @@
 # testing
 /coverage
 
-# production (temp disabled for testing backend on heroku)
-# /build
+# production
+/build
 
 # misc
 .DS_Store

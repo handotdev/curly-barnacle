@@ -13,7 +13,7 @@ app.get('/api/schedule', (req, res) => {
     const { email, id } = req.query;
     functions.handleFormSubmission(email, id)
         .then((status) => res.send({ success: status }))
-        // .catch((error) => res.send({ success: false, message: error }))
+        .catch((error) => res.send({ success: false, message: error }))
 })
 
 app.post('/api/delete-user', (req, res) => {
