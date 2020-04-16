@@ -54,7 +54,7 @@ app.get('/api/delete-class-section', (req, res) => {
     functions
       .deleteClassForUser(email, classCodeFormatted, classSection)
       .then(() => {
-        res.redirect('');
+        res.redirect('https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif');
       })
       .catch((err) => {
         res.redirect(
