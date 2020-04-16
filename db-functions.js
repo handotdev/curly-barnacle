@@ -94,8 +94,39 @@ function deleteUser(email) {
   })
 }
 
+function deleteClassForUser(email, classCode, classSection) {
+  return new Promise((resolve, reject) => {
+    db
+      .collection('classTimes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          doc.ref
+            .collection('students')
+            .get()
+            .then(querySnapshotForStudents => {
+              querySnapshotForStudents.forEach(async (student) => {
+                console.log(student.id)
+                if (student.id === email) {
+                  let docData = student.data()
+                  if (docData.course === classCode && docData.section === classSection) {
+                    await student.ref.delete().catch(err => console.log(err))
+                  }
+                }
+              })
+            })
+        })
+        resolve(true)
+      })
+      .catch(err => console.log(err));
+  })
+}
+
 module.exports = {
   insertData,
   handleFormSubmission,
-  deleteUser
+  deleteUser,
+  deleteClassForUser
 }
+
+deleteClassForUser('hyw@cornell.edu', 'INFO 1200', 'DIS 202')
