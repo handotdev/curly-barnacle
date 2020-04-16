@@ -3,3 +3,9 @@ node_modules
 
 # package-lock
 package-lock.json
+
+# environment credentials
+.env
+
+# Mac stuff
+.DS_Store
