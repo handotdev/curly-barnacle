@@ -128,5 +128,3 @@ module.exports = {
   deleteUser,
   deleteClassForUser
 }
-
-deleteClassForUser('hyw@cornell.edu', 'INFO 1200', 'DIS 202')
