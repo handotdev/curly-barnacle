@@ -7,7 +7,7 @@ function parseSchedule(id) {
     const url = `https://classes.cornell.edu/shared/schedule/${id}`;
 
     puppeteer
-      .launch()
+      .launch({ args: ['--no-sandbox'] })
       .then(browser => browser.newPage())
       .then(page => {
         return page.goto(url)
