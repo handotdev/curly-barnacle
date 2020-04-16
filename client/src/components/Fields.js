@@ -46,14 +46,14 @@ export class Fields extends Component {
           Message.success(`Successfully signed up with ${this.state.email}`);
           console.log(res.data.data);
         } else {
-          const errorMsg = (res && res.data.message) ? res.data.message : 'Enable to sign up at the moment. Please try again later'
+          const errorMsg = (res && res.data.message) ? res.data.message : 'Unable to sign up at the moment. Please try again later'
           Message.error(errorMsg);
         }
       })
       .catch(() => {
         this.setState({ loading: false });
         Message.error(
-          'Enable to sign up at the moment. Please try again later'
+          'Unable to sign up at the moment. Please try again later'
         );
       });
   };

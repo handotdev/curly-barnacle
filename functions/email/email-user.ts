@@ -37,7 +37,7 @@ function send(email, classCode, className, classSection, zoomLink) {
     from: "Notifs <curlybarnacles3333@gmail.com>",
     to: email,
     subject: `🔔 Your next class: ${classCode} is about to start!`,
-    html: template.generateHTML(classCode, className, classSection, zoomLink, randomGif),
+    html: template.generateHTML(email, classCode, className, classSection, zoomLink, randomGif),
     headers: {
       'X-Entity-Ref-ID': null
     }

@@ -1,4 +1,8 @@
-function generateHTML(classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif") {
+const unsubscribe = require('./unsubscribe-handler.js')
+const removeUser = unsubscribe.removeUser
+const removeClassSection = unsubscribe.removeClassSection
+// Thought - create a simple page displaying a message?
+function generateHTML(email, classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif") {
   return (
     `
   <p>
@@ -11,6 +15,11 @@ function generateHTML(classCode, className, sectionName, zoomLink, gif = "https:
     }
   </p>
   <img src="${gif}">
+
+  <footer>
+    <p> Don't want notifications for this class section anymore? Click <a href="www.cornellnotifs.com" onclick='removeUser(${email})'>here</a> to stop receiving emails for this class.
+    <p> Don't want any reminders? Click <a href="www.cornellnotifs.com" onclick='removeClassSection(${email},${classCode},${sectionName}')here</a> to stop receiving reminders from Cornell Notifs
+  </footer>
   `
   )
 }
