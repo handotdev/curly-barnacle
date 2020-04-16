@@ -10,24 +10,63 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('/api/schedule', (req, res) => {
-    const { email, id } = req.query;
+    const {
+        email,
+        id
+    } = req.query;
     functions.handleFormSubmission(email, id)
-        .then((status) => res.send({ success: status }))
-        .catch((error) => res.send({ success: false, message: error }))
+        .then((status) => res.send({
+            success: status
+        }))
+        .catch((error) => res.send({
+            success: false,
+            message: error
+        }))
 })
 
-app.post('/api/delete-user', (req, res) => {
-    const email = req.query.email
-    functions.deleteUser(email)
-        .then(() => res.send({ success: true }))
-        .catch(err => res.send({ success: false, message: err }))
+app.get('/api/delete-user', (req, res) => {
+    const {
+        API_KEY,
+        email
+    } = req.query;
+
+    if (API_KEY === process.env.API_KEY) {
+        functions.deleteUser(email)
+            .then(() => res.send({
+                success: true
+            }))
+            .catch(err => res.send({
+                success: false,
+                message: err
+            }))
+    } else {
+        // API credentials does not match
+        res.redirect('https://www.cornelldti.org/');
+    }
 })
 
-app.post('/api/delete-class-section', (req, res) => {
-    const { email, classCode, classSection } = req.query
-    functions.deleteClassForUser(email, classCode, classSection)
-        .then(() => res.send({ success: true }))
-        .catch(err => res.send({ success: false, message: err }))
+app.get('/api/delete-class-section', (req, res) => {
+    const {
+        API_KEY,
+        email,
+        classCode,
+        classSection
+    } = req.query;
+
+    if (API_KEY === process.env.API_KEY) {
+        const classCodeFormatted = classCode.split('+').join(' ');
+        functions.deleteClassForUser(email, classCodeFormatted, classSection)
+            .then(() => res.send({
+                success: true
+            }))
+            .catch(err => res.send({
+                success: false,
+                message: err
+            }))
+    } else {
+        // API credentials does not match
+        res.redirect('https://www.cornelldti.org/');
+    }
 })
 
 // The "catchall" handler: for any request that doesn't

@@ -1,8 +1,5 @@
-const unsubscribe = require('./unsubscribe-handler.js')
-const removeUser = unsubscribe.removeUser
-const removeClassSection = unsubscribe.removeClassSection
 // Thought - create a simple page displaying a message?
-function generateHTML(email, classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif") {
+function generateHTML(email, classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif", API_KEY) {
   return (
     `
   <p>
@@ -15,11 +12,7 @@ function generateHTML(email, classCode, className, sectionName, zoomLink, gif = 
     }
   </p>
   <img src="${gif}">
-
-  <footer>
-    <p> Don't want notifications for this class section anymore? Click <a href="www.cornellnotifs.com" onclick='removeUser(${email})'>here</a> to stop receiving emails for this class.
-    <p> Don't want any reminders? Click <a href="www.cornellnotifs.com" onclick='removeClassSection(${email},${classCode},${sectionName}')here</a> to stop receiving reminders from Cornell Notifs
-  </footer>
+  <p> Click <a href="www.cornellnotifs.com/api/delete-class-section?API_KEY=${API_KEY}&email=${email}&classCode=${classCode.split(" ").join("+")}&classSection=${sectionName}">here</a> to stop receiving emails for this class. Click <a href="www.cornellnotifs.com/api/delete-user?API_KEY=${API_KEY}&email=${email}">here</a> to unsubscribe from Cornell Notifs</p>
   `
   )
 }
