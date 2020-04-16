@@ -15,7 +15,10 @@ const insertData = (collectionsRef, time, email, docData) => {
         docRef.update({ dummy: firebase.admin.firestore.FieldValue.delete() })
         resolve(true)
       })
-      .catch(err => reject(err))
+      .catch(err => {
+        console.log(err)
+        reject(err)
+      })
   })
 }
 
