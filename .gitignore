@@ -6,3 +6,6 @@ package-lock.json
 
 # environment credentials
 .env
+
+# Mac stuff
+.DS_Store
