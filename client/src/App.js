@@ -13,7 +13,7 @@ function App() {
   return (
     <div>
       <Layout className="layout">
-        <Header style={{ color: '#FFF' }}>Zoom University@Cornell</Header>
+        <Header style={{ color: '#FFF', fontSize: '16px' }}>Cornell Notifs</Header>
         <Content>
           <div
             className="site-layout-content"
