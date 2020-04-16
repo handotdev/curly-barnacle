@@ -59,4 +59,4 @@ function send(email, classCode, className, classSection, zoomLink) {
 
 // send().catch(console.error);
 
-module.exports = send
+module.exports = { send }
