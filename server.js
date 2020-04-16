@@ -15,14 +15,14 @@ app.get('/api/schedule', (req, res) => {
         .catch((error) => res.send({ success: false, message: error }))
 })
 
-app.get('/api/delete-user', (req, res) => {
+app.post('/api/delete-user', (req, res) => {
     const email = req.query.email
     functions.deleteUser(email)
         .then(() => res.send({ success: true }))
         .catch(err => res.send({ success: false, message: err }))
 })
 
-app.get('/api/delete-class-section', (req, res) => {
+app.post('/api/delete-class-section', (req, res) => {
     const { email, classCode, classSection } = req.query
     functions.deleteClassForUser(email, classCode, classSection)
         .then(() => res.send({ success: true }))

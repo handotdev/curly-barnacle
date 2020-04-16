@@ -1,9 +1,6 @@
 const nodemailer = require('nodemailer');
-const Backendless = require('backendless')
 const template = require('./email-template.js')
 
-Backendless.initApp('564BB353-85F4-3FC9-FFA0-CE21846E2600', 'CE780BF3-909C-485F-8BC7-13CFD4DB1047')
-const bodyParts = new Backendless.Bodyparts()
 const gifsDictionary = ['https://media.giphy.com/media/DU9uAwPbm2I2A/giphy.gif', 'https://media.giphy.com/media/xUPJPlFxssGpmLemru/giphy.gif', 'https://media.giphy.com/media/ny7UCd6JETnmE/giphy.gif',
   'https://media.giphy.com/media/a8749TBnyEIY8/giphy.gif', 'https://media.giphy.com/media/QDJPrcQzXRAs0/giphy.gif', 'https://media.giphy.com/media/SWKyABQ08mbXW/giphy.gif', 'https://media.giphy.com/media/QB44N1iwGN53hAQ46L/giphy.gif',
   'https://media.giphy.com/media/CtqI1GmvT0YVO/giphy.gif', 'https://media.giphy.com/media/xThuWtk3RNzSouANuU/giphy.gif', 'https://media.giphy.com/media/heIX5HfWgEYlW/giphy.gif', 'https://media.giphy.com/media/11JTxkrmq4bGE0/giphy.gif',
@@ -60,29 +57,6 @@ function send(email, classCode, className, classSection, zoomLink) {
   })
 }
 
-function sendB(email, classCode, className, classSection, zoomLink) {
-  bodyParts.htmlmessage = template.generateHTML(classCode, className, classSection, zoomLink);
-
-  const subject = 'Your class is about to start!'
-  const recipient = email
-
-  const onSuccess = () => {
-    console.log('HTML email has been sent')
-  }
-
-  const onError = error => {
-    console.error('Server reported an error: ', error.message)
-    console.error('error code: ', error.code)
-    console.error('http status: ', error.status)
-  }
-
-  Backendless.Messaging.sendEmail(subject, bodyParts, [recipient])
-    .then(onSuccess)
-    .catch(onError)
-}
 // send().catch(console.error);
 
-module.exports = {
-  send,
-  sendB
-}
+module.exports = send
