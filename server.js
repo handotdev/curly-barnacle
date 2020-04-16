@@ -32,16 +32,22 @@ app.get('/api/delete-user', (req, res) => {
 
     if (API_KEY === process.env.API_KEY) {
         functions.deleteUser(email)
-            .then(() => res.send({
-                success: true
-            }))
-            .catch(err => res.send({
-                success: false,
-                message: err
-            }))
+            .then(() => {
+                res.send({
+                    success: true
+                })
+                res.redirect('https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif');
+            })
+            .catch(err => {
+                res.send({
+                    success: false,
+                    message: err
+                })
+                res.redirect('https://media.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif')
+            })
     } else {
         // API credentials does not match
-        res.redirect('https://www.cornelldti.org/');
+        res.redirect('https://media.giphy.com/media/IgLIVXrBcID9cExa6r/giphy.gif');
     }
 })
 
@@ -56,16 +62,22 @@ app.get('/api/delete-class-section', (req, res) => {
     if (API_KEY === process.env.API_KEY) {
         const classCodeFormatted = classCode.split('+').join(' ');
         functions.deleteClassForUser(email, classCodeFormatted, classSection)
-            .then(() => res.send({
-                success: true
-            }))
-            .catch(err => res.send({
-                success: false,
-                message: err
-            }))
+            .then(() => {
+                res.send({
+                    success: true
+                })
+                res.redirect('')
+            })
+            .catch(err => {
+                res.send({
+                    success: false,
+                    message: err
+                })
+                res.redirect('https://media.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif')
+            })
     } else {
         // API credentials does not match
-        res.redirect('https://www.cornelldti.org/');
+        res.redirect('https://media.giphy.com/media/IgLIVXrBcID9cExa6r/giphy.gif');
     }
 })
 
