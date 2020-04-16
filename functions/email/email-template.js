@@ -11,11 +11,6 @@ function generateHTML(classCode, className, sectionName, zoomLink, gif = "https:
     }
   </p>
   <img src="${gif}">
-
-  <footer>
-    <p>Don't want notifications for this class section anymore? Click <a href="delete user class link">here</a> </p>
-    <p>Don't want class alerts? Click <a href="delete user link">here</a></p>
-  </footer>
   `
   )
 }
