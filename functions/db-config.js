@@ -18,7 +18,8 @@ serviceAccount = {
 }
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://class-reminders.firebaseio.com"
 });
 
 module.exports = {
