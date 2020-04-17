@@ -22,13 +22,13 @@ const toAdd = {
     }
 }
 
-const times = ['3:40', '3:45', '3:50', '3:55', '4:00', '4:05'];
+const times = ['6:40', '6:45', '6:50', '6:55', '6:00', '6:05'];
 
 times.forEach((time) => {
-    functions.insertData(collectionsRef, "T "+time+"AM", 'ag759@cornell.edu', toAdd.data).then((res) => {
-        console.log("Successfully add doc for ag759@cornell.edu at "+time);
+    functions.insertData(collectionsRef, "F " + time + "PM", 'ag759@cornell.edu', toAdd.data).then((res) => {
+        console.log("Successfully add doc for ag759@cornell.edu at " + time);
     });
-    functions.insertData(collectionsRef, "T "+time+"AM", 'hyw2@cornell.edu', toAdd.data).then((res) => {
-        console.log("Successfully add doc for hyw2@cornell.edu at "+time);
+    functions.insertData(collectionsRef, "F " + time + "PM", 'hyw2@cornell.edu', toAdd.data).then((res) => {
+        console.log("Successfully add doc for hyw2@cornell.edu at " + time);
     });
 })

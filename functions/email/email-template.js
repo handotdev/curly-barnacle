@@ -1,6 +1,3 @@
-const unsubscribe = require('./unsubscribe-handler.js')
-const removeUser = unsubscribe.removeUser
-const removeClassSection = unsubscribe.removeClassSection
 // Thought - create a simple page displaying a message?
 function generateHTML(email, classCode, className, sectionName, zoomLink, gif = "https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif") {
   return (
