@@ -3,20 +3,14 @@ const puppeteer = require('puppeteer');
 /**  disable-eslint */
 
 function parseSchedule(id) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const url = `https://classes.cornell.edu/shared/schedule/${id}`;
 
-    puppeteer
-      .launch({ args: ['--no-sandbox'] })
-      .then(browser => browser.newPage())
-      .then(page => {
-        return page.goto(url)
-          .then(() => {
-            return page.content();
-          });
-      })
-      .then((html) => {
-        const $ = cheerio.load(html);
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+    const page = await browser.newPage();
+    await page.goto(url);
+    const html = await page.evaluate(() => document.body.innerHTML);
+    const $ = cheerio.load(html);
 
         // Initialize a map of classes on schedule indicating that it is a 
         // selected class
@@ -70,9 +64,8 @@ function parseSchedule(id) {
 
           }
         }
-        resolve(classList)
-      })
-      .catch(err => reject(err))
+      resolve(classList);
+      await browser.close();
   })
 }
 
