@@ -42,4 +42,5 @@ function generateConfirmationHTML() {
 
 module.exports = {
   generateHTML,
+  generateConfirmationHTML
 };

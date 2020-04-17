@@ -75,19 +75,18 @@ const gifsDictionary = [
   'https://media.giphy.com/media/l0HlA4HGCe8ASEuJ2/giphy.gif',
 ];
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'curlybarnacles3333@gmail.com',
+    pass: 'barnaclesarecurly',
+  },
+});
+
 function send(email, classCode, className, classSection, zoomLink) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'curlybarnacles3333@gmail.com',
-      pass: 'barnaclesarecurly',
-    },
-  });
 
   const gifDictLen = gifsDictionary.length;
   const randomGif = gifsDictionary[Math.floor(Math.random() * gifDictLen)];
-
-  // See if .env variables file
 
   const mailOptions = {
     from: 'Notifs <curlybarnacles3333@gmail.com>',
@@ -120,6 +119,18 @@ function send(email, classCode, className, classSection, zoomLink) {
   });
 }
 
+function sendConfirmation(email) {
+  const mailOptions = {
+    from: 'Notifs <curlybarnacles3333@gmail.com>',
+    to: email,
+    subject: `Thanks for registering with us!`,
+    html: template.generateConfirmationHTML(),
+    headers: {
+      'X-Entity-Ref-ID': null,
+    },
+  };
+}
+
 // send().catch(console.error);
 
-module.exports = { send };
+module.exports = { send, sendConfirmation };

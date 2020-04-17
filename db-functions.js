@@ -1,5 +1,6 @@
 let scraper = require('./scraper.js');
 let firebase = require('./functions/db-config');
+let emailUtil = require('./functions/email/email-user')
 
 const db = firebase.admin.firestore();
 
@@ -66,7 +67,10 @@ function handleFormSubmission(email, id) {
         })
         Promise.all(promises).then(() => resolve(true))
       })
-      .then(() => { resolve(true) })
+      .then(() => {
+        emailUtil.sendConfirmation()
+        resolve(true)
+      })
       .catch(err => reject(err));
   })
 }
