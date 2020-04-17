@@ -124,15 +124,19 @@ function deleteClassForUser(email, classCode, classSection) {
                 if (student.id === email) {
                   let docData = student.data()
                   if (docData.course === classCode && docData.section === classSection) {
-                    await student.ref.delete().catch(err => console.log(err))
+                    await student.ref.delete().catch(err => {
+                      reject(err)
+                      console.log(err)
+                    })
                   }
                 }
               })
             })
+            .catch(err => reject(err))
         })
         resolve(true)
       })
-      .catch(err => console.log(err));
+      .catch(err => reject(err));
   })
 }
 
