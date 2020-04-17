@@ -67,8 +67,8 @@ function handleFormSubmission(email, id) {
         })
         Promise.all(promises).then(() => resolve(true))
       })
-      .then(() => {
-        emailUtil.sendConfirmation()
+      .then(async () => {
+        await emailUtil.sendConfirmation()
         resolve(true)
       })
       .catch(err => reject(err));
