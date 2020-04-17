@@ -99,8 +99,7 @@ function send(email, classCode, className, classSection, zoomLink) {
       className,
       classSection,
       zoomLink,
-      randomGif,
-      process.env.API_KEY
+      randomGif
     ),
     headers: {
       'X-Entity-Ref-ID': null,
