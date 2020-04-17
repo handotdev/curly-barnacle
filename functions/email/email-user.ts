@@ -75,19 +75,18 @@ const gifsDictionary = [
   'https://media.giphy.com/media/l0HlA4HGCe8ASEuJ2/giphy.gif',
 ];
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASS,
+  },
+});
+
 function send(email, classCode, className, classSection, zoomLink) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'curlybarnacles3333@gmail.com',
-      pass: 'barnaclesarecurly',
-    },
-  });
 
   const gifDictLen = gifsDictionary.length;
   const randomGif = gifsDictionary[Math.floor(Math.random() * gifDictLen)];
-
-  // See if .env variables file
 
   const mailOptions = {
     from: 'Notifs <curlybarnacles3333@gmail.com>',
@@ -120,6 +119,32 @@ function send(email, classCode, className, classSection, zoomLink) {
   });
 }
 
+function sendConfirmation(email, courseData) {
+
+  const mailOptions = {
+    from: 'Notifs <curlybarnacles3333@gmail.com>',
+    to: email,
+    subject: `💃 Successfully Registered!`,
+    html: template.generateConfirmationHTML(courseData),
+    headers: {
+      'X-Entity-Ref-ID': null,
+    },
+  };
+
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        console.log('Message sent: %s', info.messageId);
+        console.log(info.response);
+        resolve();
+      }
+    });
+  });
+}
+
 // send().catch(console.error);
 
-module.exports = { send };
+module.exports = { send, sendConfirmation };

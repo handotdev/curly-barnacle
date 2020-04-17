@@ -1,5 +1,6 @@
 let scraper = require('./scraper.js');
 let firebase = require('./functions/db-config');
+let emailUtil = require('./functions/email/email-user.ts')
 
 const db = firebase.admin.firestore();
 
@@ -30,6 +31,8 @@ function handleFormSubmission(email, id) {
         if (response.length === 0) reject("Invalid Schedule URL");
         const collectionsRef = await db.collection('classTimes');
         let promises = [];
+        let courseData = [];
+        let stored = new Set()
         response.forEach(courseInfo => {
           for (let i = 0; i < courseInfo['days'].length; i += 1) {
 
@@ -54,10 +57,13 @@ function handleFormSubmission(email, id) {
                   section: courseInfo['section'][i]
                 }
 
+                if (!stored.has(docData.course + ' ' + docData.section)) {
+                  courseData.push(docData)
+                  stored.add(docData.course + ' ' + docData.section)
+                }
                 // Increment if it is Sunday
                 if (isSunday) j++;
 
-                console.log(docData);
                 // Add data to firebase
                 promises.push(insertData(collectionsRef, docName, email, docData))
               }
@@ -65,8 +71,13 @@ function handleFormSubmission(email, id) {
           }
         })
         Promise.all(promises).then(() => resolve(true))
+        return courseData
       })
-      .then(() => { resolve(true) })
+      .then(async (courseData) => {
+        emailUtil.sendConfirmation(email, courseData)
+          .then(() => resolve(true))
+          .catch((err) => reject(err))
+      })
       .catch(err => reject(err));
   })
 }
@@ -113,15 +124,19 @@ function deleteClassForUser(email, classCode, classSection) {
                 if (student.id === email) {
                   let docData = student.data()
                   if (docData.course === classCode && docData.section === classSection) {
-                    await student.ref.delete().catch(err => console.log(err))
+                    await student.ref.delete().catch(err => {
+                      reject(err)
+                      console.log(err)
+                    })
                   }
                 }
               })
             })
+            .catch(err => reject(err))
         })
         resolve(true)
       })
-      .catch(err => console.log(err));
+      .catch(err => reject(err));
   })
 }
 
