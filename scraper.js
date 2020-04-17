@@ -7,12 +7,14 @@ function parseSchedule(id) {
     const url = `https://classes.cornell.edu/shared/schedule/${id}`;
 
     puppeteer
-      .launch({ args: ['--no-sandbox'] })
+      .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
       .then(browser => browser.newPage())
       .then(page => {
         return page.goto(url)
           .then(() => {
-            return page.content();
+            const content = page.content();
+            page.close();
+            return content;
           });
       })
       .then((html) => {
