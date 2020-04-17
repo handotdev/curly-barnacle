@@ -40,11 +40,11 @@ function generateConfirmationHTML(courseData) {
   })
   return (
     `
-    <p> Hey there! Welcome to Cornell Notifs! You will get reminders for the following courses:</p> 
+    <p>Hey there! Welcome to Cornell Notifs! You will get reminders for the following courses:</p> 
     <ul>
     ${courses}
     </ul>
-    <p>Enjoy!</p>
+    <img src="https://media.giphy.com/media/a0h7sAqON67nO/giphy.gif">
     <br>
     <p>Cheers,</p>
     <p>Han & Ansh</p>

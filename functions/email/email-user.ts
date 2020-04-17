@@ -78,8 +78,8 @@ const gifsDictionary = [
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'curlybarnacles3333@gmail.com',
-    pass: 'barnaclesarecurly',
+    user: process.env.EMAIL,
+    pass: process.env.PASS,
   },
 });
 
@@ -124,7 +124,7 @@ function sendConfirmation(email, courseData) {
   const mailOptions = {
     from: 'Notifs <curlybarnacles3333@gmail.com>',
     to: email,
-    subject: `Thanks for registering with us!`,
+    subject: `💃 Successfully Registered!`,
     html: template.generateConfirmationHTML(courseData),
     headers: {
       'X-Entity-Ref-ID': null,
