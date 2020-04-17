@@ -29,10 +29,22 @@ function generateHTML(
   `;
 }
 
-function generateConfirmationHTML() {
+function generateConfirmationHTML(courseData) {
+
+  let courses = ""
+  courseData.forEach(courseInfo => {
+    const courseCode = courseInfo.course
+    const courseName = courseInfo.name
+    const sectionCode = courseInfo.section
+    courses += `<li>${courseCode} (${courseName}), ${sectionCode}</li>`
+  })
   return (
     `
-    <p> Hey there! Welcome to Cornell Notifs! You will now get timely reminders for your online classes. Enjoy!</p>
+    <p> Hey there! Welcome to Cornell Notifs! You will get reminders for the following courses:</p> 
+    <ul>
+    ${courses}
+    </ul>
+    <p>Enjoy!</p>
     <br>
     <p>Cheers,</p>
     <p>Han & Ansh</p>

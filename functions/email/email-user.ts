@@ -119,16 +119,30 @@ function send(email, classCode, className, classSection, zoomLink) {
   });
 }
 
-function sendConfirmation(email) {
+function sendConfirmation(email, courseData) {
+
   const mailOptions = {
     from: 'Notifs <curlybarnacles3333@gmail.com>',
     to: email,
     subject: `Thanks for registering with us!`,
-    html: template.generateConfirmationHTML(),
+    html: template.generateConfirmationHTML(courseData),
     headers: {
       'X-Entity-Ref-ID': null,
     },
   };
+
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        console.log('Message sent: %s', info.messageId);
+        console.log(info.response);
+        resolve();
+      }
+    });
+  });
 }
 
 // send().catch(console.error);
