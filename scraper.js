@@ -12,9 +12,7 @@ function parseSchedule(id) {
       .then(page => {
         return page.goto(url)
           .then(() => {
-            const content = page.content();
-            page.close();
-            return content;
+            return page.content();
           });
       })
       .then((html) => {
