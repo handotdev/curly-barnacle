@@ -115,5 +115,3 @@ exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
     console.log('sending emails')
     await sendEmails()
   })
-
-sendEmails()
