@@ -6,7 +6,7 @@ function parseSchedule(id) {
   return new Promise(async (resolve, reject) => {
     const url = `https://classes.cornell.edu/shared/schedule/${id}`;
 
-    const browser = puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
     const page = await browser.newPage();
     await page.goto(url);
     const html = await page.evaluate(() => document.body.innerHTML);
