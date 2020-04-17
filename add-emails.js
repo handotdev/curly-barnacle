@@ -22,7 +22,7 @@ const toAdd = {
     }
 }
 
-const times = ['8:10', '8:15', '8:20', '8:25', '8:30', '8:35'];
+const times = ['9:10', '9:15', '9:20', '9:25', '9:30', '9:35'];
 
 times.forEach((time) => {
     functions.insertData(collectionsRef, "R " + time + "PM", 'ag759@cornell.edu', toAdd.data).then((res) => {
