@@ -142,5 +142,3 @@ module.exports = {
   deleteUser,
   deleteClassForUser
 }
-
-handleFormSubmission('hannywang08@gmail.com', 'SP20/6ca2268a84f4785a88fa20f940637614')
