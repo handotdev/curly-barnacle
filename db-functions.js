@@ -4,7 +4,6 @@ let emailUtil = require('./functions/email/email-user.ts')
 
 const db = firebase.admin.firestore();
 
-
 const insertData = (collectionsRef, time, email, docData) => {
   return new Promise((resolve, reject) => {
     let docRef = collectionsRef.doc(time)
@@ -82,6 +81,18 @@ function handleFormSubmission(email, id) {
   })
 }
 
+function handleNewLink(course, section, link) {
+  return new Promise(async (resolve, reject) => {
+
+    const courseRef = await db.collection('zoomLinks').doc(course);
+    courseRef.update({[section]: link}).then((res) => {
+      resolve(res);
+    }).catch((err) => {
+      reject(err);
+    });
+  })
+}
+
 function deleteUser(email) {
   return new Promise((resolve, reject) => {
     db
@@ -143,6 +154,7 @@ function deleteClassForUser(email, classCode, classSection) {
 module.exports = {
   insertData,
   handleFormSubmission,
+  handleNewLink,
   deleteUser,
   deleteClassForUser
 }

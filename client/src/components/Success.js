@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Form, Input, Tooltip, Modal } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 
@@ -13,7 +14,25 @@ export function Success(props) {
         const [links, setLinks] = useState({});
 
         const addLinks = () => {
-            console.log(links);
+            const linksArray = Object.entries(links);
+            const requestPromises = [];
+
+            linksArray.forEach(([className, meetingID]) => {
+                const splitName = className.split('-');
+                const course = splitName[0];
+                const section = splitName[1];
+
+                // Replace dashes in meeting IDs
+                const zoomLink = `https://cornell.zoom.us/j/${meetingID.replace(/-/g,'')}`;
+
+                requestPromises.push(axios.get(`/api/addLink?course=${course}&section=${section}&link=${zoomLink}`));
+            })
+
+            Promise.all(requestPromises).then(res => {
+                console.log("Added links");
+            }).catch(err => {
+                console.log(err);
+            })
         }
 
         return (
@@ -29,7 +48,7 @@ export function Success(props) {
                 form={form}
                 {...completeLayout}
                 name="addLinks"
-                onFinish={() => addLinks}
+                onFinish={addLinks}
             >
             <Form.Item>We identified classes in your schedule that we don't currently have Zoom links for. Save your Zoom meeting IDs so we can send them to you before classes!</Form.Item>
             <Form.Item>
