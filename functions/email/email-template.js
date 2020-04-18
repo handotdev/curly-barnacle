@@ -25,7 +25,9 @@ function generateHTML(
     }
   </p>
   <img src="${gif}">
-  <p> Click <a href="www.cornellnotifs.com/api/delete-class-section?email=${cipherString}&classCode=${classCode.split(' ').join('+')}&classSection=${sectionName.split(' ').join('+')}">here</a> to stop receiving emails for this class. Click <a href="www.cornellnotifs.com/api/delete-user?email=${cipherString}">here</a> to unsubscribe from Cornell Notifs</p>
+  <br>
+  <br>
+  <p style="font-size:11px"> Click <a href="www.cornellnotifs.com/api/delete-class-section?email=${cipherString}&classCode=${classCode.split(' ').join('+')}&classSection=${sectionName.split(' ').join('+')}">here</a> to stop receiving emails for this class. Click <a href="www.cornellnotifs.com/api/delete-user?email=${cipherString}">here</a> to unsubscribe from Cornell Notifs</p>
   `;
 }
 
