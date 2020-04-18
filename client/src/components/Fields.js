@@ -46,8 +46,13 @@ export class Fields extends Component {
       .then((res) => {
         this.setState({ loading: false });
         if (res.data.success === true) {
-          // Pop up with success modal
-          this.setState({showSuccessModal: true, classesWithoutLinks: res.data.unlinkedClasses});
+          // Only load success modal prompt when there is at least one unlinked class
+          if (res.data.unlinkedClasses.length > 0) {
+            // Pop up with success modal
+            this.setState({showSuccessModal: true, classesWithoutLinks: res.data.unlinkedClasses});
+          } else {
+            Message.success(`Successfully registered with ${email}`);
+          }
         } else {
           const errorMsg = (res && res.data.message && res.data.message.length>0) ? res.data.message : 'Unable to sign up at the moment. Please try again later'
           Message.error(errorMsg);

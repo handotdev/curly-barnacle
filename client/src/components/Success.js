@@ -32,7 +32,7 @@ export function Success(props) {
                 Promise.all(requestPromises).then(res => {
                     // Hide after clicking button and success
                     props.hideSuccess();
-                    Message.success(`Successfully added links to ${linksArray.length} classes`);
+                    Message.success(`Successfully added links to ${linksArray.length} ${linksArray.length === 1 ? 'Class' : 'Classes'}`);
                 }).catch(err => {
                     Message.error(`Unable to add links right now. Try again later`);
                     console.log(err);
@@ -46,6 +46,8 @@ export function Success(props) {
             <Modal
                 visible={props.visible}
                 title={<span><CheckCircleTwoTone twoToneColor="#52c41a" /> Successfully signed up with {props.email}</span>}
+                closable={false}
+                maskClosable={false}
                 cancelText= "No Thanks"
                 okText= 'Save'
                 onOk={() => form.submit()}
@@ -68,8 +70,16 @@ export function Success(props) {
                 <Form.Item
                 label={`${classInfo.course} - ${classInfo.section}`}
                 name={`${classInfo.course}-${classInfo.section}`}
+                rules={[
+                    {
+                      pattern: /\d{9,13}/gi,
+                      message: 'Please enter a valid Zoom meeting ID',
+                    },
+                  ]}
                 >
                 <Input 
+                    placeholder="9 - 11 digit meeting ID"
+                    type="number"
                     onChange={(e) => setLinks({...links, [`${classInfo.course}-${classInfo.section}`]: e.target.value })}
                 />
                 </Form.Item>
