@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Form, Input, Button, Tooltip, message as Message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
+import Success from './Success';
+
 import './Fields.css';
 
 const layout = {
@@ -21,6 +23,7 @@ export class Fields extends Component {
       email: '',
       url: '',
       loading: false,
+      showSuccessModal: true
     };
   }
 
@@ -60,6 +63,7 @@ export class Fields extends Component {
 
   render() {
     return (
+      <React.Fragment>
       <Form
         {...layout}
         style={{ marginTop: '24px' }}
@@ -122,6 +126,12 @@ export class Fields extends Component {
           </Button>
         </Form.Item>
       </Form>
+      <Success 
+        visible={this.state.showSuccessModal}
+        classes={[{course: 'CS 3110', section: 'LEC 001'}, {course: 'INFO 1200', section: 'LEC 001'}]}
+        hideSuccess={() => this.setState({showSuccessModal: false})}
+      />
+      </React.Fragment>
     );
   }
 }
