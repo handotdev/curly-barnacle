@@ -24,16 +24,20 @@ export function Success(props) {
                     const course = splitName[0];
                     const section = splitName[1];
 
-                    // Replace dashes in meeting IDs
-                    const zoomLink = `https://cornell.zoom.us/j/${meetingID.replace(/-/g,'')}`;
-
-                    requestPromises.push(axios.get(`/api/addLink?course=${course}&section=${section}&link=${zoomLink}`));
+                    // Account for errors where the meetingid is empty
+                    if (meetingID.length > 0) {
+                        // Replace dashes in meeting IDs
+                        const zoomLink = `https://cornell.zoom.us/j/${meetingID.replace(/-/g,'')}`;
+                        requestPromises.push(axios.get(`/api/addLink?course=${course}&section=${section}&link=${zoomLink}`));
+                    }
                 })
 
                 Promise.all(requestPromises).then(res => {
                     // Hide after clicking button and success
                     props.hideSuccess();
-                    Message.success(`Successfully added links to ${linksArray.length} ${linksArray.length === 1 ? 'class' : 'classes'}`);
+                    Message.success(`Successfully added links to ${requestPromises.length} ${requestPromises.length === 1 ? 'class' : 'classes'}`);
+                    // Clear links
+                    setLinks({});
                 }).catch(err => {
                     Message.error(`Unable to add links right now. Try again later`);
                     console.log(err);

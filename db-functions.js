@@ -109,7 +109,7 @@ function handleNewLink(course, section, link) {
   return new Promise(async (resolve, reject) => {
 
     const courseRef = await db.collection('zoomLinks').doc(course);
-    courseRef.update({[section]: link}).then((res) => {
+    courseRef.set({[section]: link}, {merge: true}).then((res) => {
       resolve(res);
     }).catch((err) => {
       reject(err);
