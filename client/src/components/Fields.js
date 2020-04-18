@@ -23,7 +23,8 @@ export class Fields extends Component {
       email: '',
       url: '',
       loading: false,
-      showSuccessModal: true
+      showSuccessModal: false,
+      classesWithoutLinks: []
     };
   }
 
@@ -43,11 +44,10 @@ export class Fields extends Component {
     axios
       .get(`/api/schedule?email=${email}&id=${schedulerId}`)
       .then((res) => {
-        console.log(res);
         this.setState({ loading: false });
         if (res.data.success === true) {
-          Message.success(`Successfully signed up with ${this.state.email}`);
-          console.log(res.data.data);
+          // Pop up with success modal
+          this.setState({showSuccessModal: true, classesWithoutLinks: res.data.unlinkedClasses});
         } else {
           const errorMsg = (res && res.data.message && res.data.message.length>0) ? res.data.message : 'Unable to sign up at the moment. Please try again later'
           Message.error(errorMsg);
@@ -92,8 +92,8 @@ export class Fields extends Component {
           rules={[
             { required: true, message: 'URL field cannot be empty' },
             {
-              pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/(sp|su|fa|wi)[1-2][0-9]\/.......+/gi,
-              message: 'Please enter a valid shared schedule URL',
+              pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/sp20\/.......+/gi,
+              message: 'Please enter a valid Spring 2020 shared schedule URL',
             },
           ]}
         >
@@ -127,8 +127,9 @@ export class Fields extends Component {
         </Form.Item>
       </Form>
       <Success 
+        email={this.state.email}
         visible={this.state.showSuccessModal}
-        classes={[{course: 'CS 3110', section: 'LEC 001'}, {course: 'INFO 1200', section: 'LEC 001'}]}
+        classes={this.state.classesWithoutLinks}
         hideSuccess={() => this.setState({showSuccessModal: false})}
       />
       </React.Fragment>

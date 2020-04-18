@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Form, Input, Tooltip, Modal } from 'antd';
+import { Form, Input, Tooltip, Modal, message as Message } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 
 const completeLayout = {
@@ -15,31 +15,38 @@ export function Success(props) {
 
         const addLinks = () => {
             const linksArray = Object.entries(links);
-            const requestPromises = [];
+            if (linksArray.length > 0) {
+                const requestPromises = [];
 
-            linksArray.forEach(([className, meetingID]) => {
-                const splitName = className.split('-');
-                const course = splitName[0];
-                const section = splitName[1];
+                linksArray.forEach(([className, meetingID]) => {
+                    const splitName = className.split('-');
+                    const course = splitName[0];
+                    const section = splitName[1];
 
-                // Replace dashes in meeting IDs
-                const zoomLink = `https://cornell.zoom.us/j/${meetingID.replace(/-/g,'')}`;
+                    // Replace dashes in meeting IDs
+                    const zoomLink = `https://cornell.zoom.us/j/${meetingID.replace(/-/g,'')}`;
 
-                requestPromises.push(axios.get(`/api/addLink?course=${course}&section=${section}&link=${zoomLink}`));
-            })
+                    requestPromises.push(axios.get(`/api/addLink?course=${course}&section=${section}&link=${zoomLink}`));
+                })
 
-            Promise.all(requestPromises).then(res => {
-                console.log("Added links");
-            }).catch(err => {
-                console.log(err);
-            })
+                Promise.all(requestPromises).then(res => {
+                    // Hide after clicking button and success
+                    props.hideSuccess();
+                    Message.success(`Successfully added links to ${linksArray.length} classes`);
+                }).catch(err => {
+                    Message.error(`Unable to add links right now. Try again later`);
+                    console.log(err);
+                })
+            } else {
+                Message.info(`At least one link is required to save`);
+            }
         }
 
         return (
             <Modal
                 visible={props.visible}
-                title={<span><CheckCircleTwoTone twoToneColor="#52c41a" /> Successfully signed up with hyw2@cornell.edu</span>}
-                cancelText= "Skip"
+                title={<span><CheckCircleTwoTone twoToneColor="#52c41a" /> Successfully signed up with {props.email}</span>}
+                cancelText= "No Thanks"
                 okText= 'Save'
                 onOk={() => form.submit()}
                 onCancel={props.hideSuccess}
@@ -61,7 +68,6 @@ export function Success(props) {
                 <Form.Item
                 label={`${classInfo.course} - ${classInfo.section}`}
                 name={`${classInfo.course}-${classInfo.section}`}
-                rules={[{ required: true, message: 'Please input your username!' }]}
                 >
                 <Input 
                     onChange={(e) => setLinks({...links, [`${classInfo.course}-${classInfo.section}`]: e.target.value })}

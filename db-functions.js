@@ -22,6 +22,25 @@ const insertData = (collectionsRef, time, email, docData) => {
   })
 }
 
+function retrieveMissingLinks(classes) {
+  return new Promise(async (resolve, reject) => {
+    const linksRef = await db.collection('zoomLinks');
+
+    const coursePromises = classes.map(classObj => linksRef.doc(classObj.course).get());
+    Promise.all(coursePromises)
+      .then(res => {
+        const classesMap = {};
+        res.forEach((classObj) => {
+          classesMap[classObj.id] = classObj.data();
+        })
+
+        const nonLinkedClasses = classes.filter((classObj) => !classesMap[classObj.course] || !classesMap[classObj.course][classObj.section]);
+        resolve(nonLinkedClasses);
+      })
+      .catch(err => reject(err));
+  })
+}
+
 function handleFormSubmission(email, id) {
   return new Promise((resolve, reject) => {
 
@@ -69,7 +88,12 @@ function handleFormSubmission(email, id) {
             }
           }
         })
-        Promise.all(promises).then(() => resolve(true))
+        Promise.all(promises).then(() => {
+          // Retrieve missing links
+          retrieveMissingLinks(courseData).then((unlinkedCourses) => {
+            resolve(unlinkedCourses);
+          })
+        })
         return courseData
       })
       .then(async (courseData) => {

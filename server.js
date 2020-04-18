@@ -17,9 +17,10 @@ app.get('/api/schedule', (req, res) => {
     } = req.query;
     functions
         .handleFormSubmission(email, id)
-        .then((status) =>
+        .then((unlinkedClasses) =>
             res.send({
-                success: status,
+                success: true,
+                unlinkedClasses
             })
         )
         .catch((error) =>
