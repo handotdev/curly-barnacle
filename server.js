@@ -83,7 +83,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
-const PORT = process.env.PORT || 3333;
+const PORT = process.env.PORT || 3000;
 // functions.deleteUser('hyw2@cornell.edu');
 
 app.listen(PORT, () => {
