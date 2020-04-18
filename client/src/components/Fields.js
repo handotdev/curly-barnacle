@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Form, Input, Button, Tooltip, message as Message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
+import Success from './Success';
+
 import './Fields.css';
 
 const layout = {
@@ -21,6 +23,8 @@ export class Fields extends Component {
       email: '',
       url: '',
       loading: false,
+      showSuccessModal: false,
+      classesWithoutLinks: []
     };
   }
 
@@ -40,11 +44,15 @@ export class Fields extends Component {
     axios
       .get(`/api/schedule?email=${email}&id=${schedulerId}`)
       .then((res) => {
-        console.log(res);
         this.setState({ loading: false });
         if (res.data.success === true) {
-          Message.success(`Successfully signed up with ${this.state.email}`);
-          console.log(res.data.data);
+          // Only load success modal prompt when there is at least one unlinked class
+          if (res.data.unlinkedClasses.length > 0) {
+            // Pop up with success modal
+            this.setState({showSuccessModal: true, classesWithoutLinks: res.data.unlinkedClasses});
+          } else {
+            Message.success(`Successfully registered with ${email}`);
+          }
         } else {
           const errorMsg = (res && res.data.message && res.data.message.length>0) ? res.data.message : 'Unable to sign up at the moment. Please try again later'
           Message.error(errorMsg);
@@ -60,6 +68,7 @@ export class Fields extends Component {
 
   render() {
     return (
+      <React.Fragment>
       <Form
         {...layout}
         style={{ marginTop: '24px' }}
@@ -88,8 +97,8 @@ export class Fields extends Component {
           rules={[
             { required: true, message: 'URL field cannot be empty' },
             {
-              pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/(sp|su|fa|wi)[1-2][0-9]\/.......+/gi,
-              message: 'Please enter a valid shared schedule URL',
+              pattern: /(https?:\/\/)?(www\.)?classes\.cornell\.edu\/shared\/schedule\/sp20\/.......+/gi,
+              message: 'Please enter a valid Spring 2020 shared schedule URL',
             },
           ]}
         >
@@ -122,6 +131,13 @@ export class Fields extends Component {
           </Button>
         </Form.Item>
       </Form>
+      <Success 
+        email={this.state.email}
+        visible={this.state.showSuccessModal}
+        classes={this.state.classesWithoutLinks}
+        hideSuccess={() => this.setState({showSuccessModal: false})}
+      />
+      </React.Fragment>
     );
   }
 }
