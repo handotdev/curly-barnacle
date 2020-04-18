@@ -4,7 +4,6 @@ let emailUtil = require('./functions/email/email-user.ts')
 
 const db = firebase.admin.firestore();
 
-
 const insertData = (collectionsRef, time, email, docData) => {
   return new Promise((resolve, reject) => {
     let docRef = collectionsRef.doc(time)
@@ -20,6 +19,25 @@ const insertData = (collectionsRef, time, email, docData) => {
         console.log(err)
         reject(err)
       })
+  })
+}
+
+function retrieveMissingLinks(classes) {
+  return new Promise(async (resolve, reject) => {
+    const linksRef = await db.collection('zoomLinks');
+
+    const coursePromises = classes.map(classObj => linksRef.doc(classObj.course).get());
+    Promise.all(coursePromises)
+      .then(res => {
+        const classesMap = {};
+        res.forEach((classObj) => {
+          classesMap[classObj.id] = classObj.data();
+        })
+
+        const nonLinkedClasses = classes.filter((classObj) => !classesMap[classObj.course] || !classesMap[classObj.course][classObj.section]);
+        resolve(nonLinkedClasses);
+      })
+      .catch(err => reject(err));
   })
 }
 
@@ -70,7 +88,12 @@ function handleFormSubmission(email, id) {
             }
           }
         })
-        Promise.all(promises).then(() => resolve(true))
+        Promise.all(promises).then(() => {
+          // Retrieve missing links
+          retrieveMissingLinks(courseData).then((unlinkedCourses) => {
+            resolve(unlinkedCourses);
+          })
+        })
         return courseData
       })
       .then(async (courseData) => {
@@ -79,6 +102,18 @@ function handleFormSubmission(email, id) {
           .catch((err) => reject(err))
       })
       .catch(err => reject(err));
+  })
+}
+
+function handleNewLink(course, section, link) {
+  return new Promise(async (resolve, reject) => {
+
+    const courseRef = await db.collection('zoomLinks').doc(course);
+    courseRef.set({[section]: link}, {merge: true}).then((res) => {
+      resolve(res);
+    }).catch((err) => {
+      reject(err);
+    });
   })
 }
 
@@ -143,6 +178,7 @@ function deleteClassForUser(email, classCode, classSection) {
 module.exports = {
   insertData,
   handleFormSubmission,
+  handleNewLink,
   deleteUser,
   deleteClassForUser
 }
