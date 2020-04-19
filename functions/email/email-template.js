@@ -19,8 +19,9 @@ function generateHTML(
   <p>
     ${
     zoomLink
-      ? `Access your class at: <a href="${zoomLink}">${zoomLink}</a>`
-      : `We unfortunately don't have a zoom link for this class right now 😢<br>
+      ? `Access your class at: <a href="${zoomLink}">${zoomLink}</a><br><br>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfIr_-DglAuOSA7Z7YbRW-e41tVZQdAtR6W1PxJly_hkEQeaQ/viewform?usp=pp_url&entry.366340186=${classCode.split(' ').join('+')}&entry.805749716=${sectionName.split(' ').join('+')}" style="font-weight: bold; text-decoration: none; color: #4082ed;">Incorrect Zoom Link? Let us know here</a>`
+      : `We unfortunately don't have a zoom link for this class right now 😢<br><br>
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSfIr_-DglAuOSA7Z7YbRW-e41tVZQdAtR6W1PxJly_hkEQeaQ/viewform?usp=pp_url&entry.366340186=${classCode.split(' ').join('+')}&entry.805749716=${sectionName.split(' ').join('+')}" style="font-weight: bold; text-decoration: none; color: #4082ed;">Add Zoom Link</a>`
     }
   </p>
