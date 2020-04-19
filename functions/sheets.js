@@ -10,14 +10,10 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // time.
 const TOKEN_PATH = 'token.json';
 
-// Load client secrets from a local file.
-// fs.readFile('credentials.json', (err, content) => {
-//   if (err) return console.log('Error loading client secret file:', err);
-//   // Authorize a client with credentials, then call the Google Sheets API.
-//   authorize(JSON.parse(content), listMajors);
-// });
-
+// Load the sheets API credentials
 const sheetsCredentials = process.env.SHEETS_CREDENTIALS
+
+// call the script.
 authorize(JSON.parse(sheetsCredentials), updateMeetingToLink)
 
 /**
@@ -70,20 +66,37 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
+/**
+ * Get all the meeting IDs stored on the google sheets to transform to a zoom link
+ * 
+ * @param {*} auth: The authorization credentials allowing us to interface with the
+ * sheets API
+ */
 function getMeetingLinks(auth) {
   return new Promise((resolve, reject) => {
+    // Initialize google sheets
     const sheets = google.sheets({ version: 'v4', auth });
+
+    // idLinks will contain the objects of the class with meeting id link with the cell it was stored in
     let idLinks = []
+
     sheets.spreadsheets.values
       .get({
         spreadsheetId: '1pFQNnNGhzM0OJhFTCXoSdSv1JDDuGrNzYH9YxlwNnJc',
+
+        // get all the columns where the links and meeting IDs are stored
         range: 'LinkFormData!E2:E',
       }, (err, res) => {
         if (err) return reject('The API returned an error: ' + err);
+
+        // get all the rows
         const rows = res.data.values;
+
         if (rows.length) {
           rows.map((row, index) => {
-            if (!(row[0].includes('cornell.zoom.us'))) {
+            // TODO: change this check.
+            if (!(row[0].includes('cornell.zoom.us') || row[0].includes('canvas.cornell.edu'))) {
+              // Push the meetingID and corresponding cell onto iddLinks
               idLinks.push({ meetingID: row[0], cell: `G${2 + index}` })
             }
           });
@@ -97,24 +110,41 @@ function getMeetingLinks(auth) {
 
 function updateMeetingToLink(auth) {
   const sheets = google.sheets({ version: 'v4', auth });
+  // Get all the entries where meeting IDs have been entered instead of zoom links
   getMeetingLinks(auth)
     .then(idLinks => {
+      let dataArr = []
       idLinks.forEach(({ meetingID, cell }) => {
         // reformat meeting ID to zoom link
         const meetingLink = 'https://cornell.zoom.us/j/' + meetingID.split('-').join('')
+
+        // set the value to enter onto the cell
         const value = [[meetingLink]]
+
+        // Reformat the cell value to A1 notation
         const cellInput = `LinkFormData!${cell}:${cell}`
 
-        const resource = { values: value }
-        sheets.spreadsheets.values.update({
-          spreadsheetId: '1pFQNnNGhzM0OJhFTCXoSdSv1JDDuGrNzYH9YxlwNnJc',
+        // Set the data config for this specific entry
+        const data = {
           range: cellInput,
-          valueInputOption: 'RAW',
-          resource: resource
-        }, (err, _) => {
-          if (err) return console.log(err);
-          console.log('successfully updated')
-        })
+          majorDimension: "ROWS",
+          values: value
+        }
+        dataArr.push(data)
+      })
+
+      const resource = {
+        valueInputOption: 'RAW',
+        data: dataArr
+      }
+
+      // batch update all the entries that need updating
+      sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId: '1pFQNnNGhzM0OJhFTCXoSdSv1JDDuGrNzYH9YxlwNnJc',
+        resource: resource
+      }, (err, _) => {
+        if (err) return console.log(err);
+        console.log('successfully updated')
       })
     })
 }
