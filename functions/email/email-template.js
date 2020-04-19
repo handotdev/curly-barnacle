@@ -21,8 +21,7 @@ function generateHTML(
     zoomLink
       ? `Access your class at: <a href="${zoomLink}">${zoomLink}</a>`
       : `We unfortunately don't have a zoom link for this class right now 😢<br>
-      <p>But you can <a href="https://docs.google.com/forms/d/e/1FAIpQLSfIr_-DglAuOSA7Z7YbRW-e41tVZQdAtR6W1PxJly_hkEQeaQ/viewform?usp=pp_url&entry.366340186=${classCode.split(' ').join('+')}&entry.805749716=${sectionName.split(' ').join('+')}">give us the Zoom link</a> so we can send this to you in the future!</p>
-      <br><div style="width: 100%; text-align: center;"><a href="www.cornellnotifs.com/api/delete-class-section?email=${cipherString}&classCode=${classCode.split(' ').join('+')}&classSection=${sectionName.split(' ').join('+')}" style="width: 50%; margin: 0 auto; text-decoration: none; color: white; background: #4082ed; border-color:#4082ed; border-radius:4px; padding: 7px 10px;">Enter your links!</a></div>`
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfIr_-DglAuOSA7Z7YbRW-e41tVZQdAtR6W1PxJly_hkEQeaQ/viewform?usp=pp_url&entry.366340186=${classCode.split(' ').join('+')}&entry.805749716=${sectionName.split(' ').join('+')}" style="font-weight: bold; text-decoration: none; color: #4082ed;">Add Zoom Link</a>`
     }
   </p>
   <img src="${gif}">

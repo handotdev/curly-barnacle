@@ -109,7 +109,7 @@ const sendEmails = async () => {
     .catch(err => console.log(err))
 }
 
-exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
+exports.scheduledEmailSend = functions.pubsub.schedule('*/5 * * * *')
   .timeZone('America/New_York')
   .onRun(async (context) => {
     console.log('sending emails')
