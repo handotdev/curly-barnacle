@@ -21,10 +21,10 @@ function Window() {
       </div>
 
       <div className="content" style={{ textAlign: 'center' }}>
-        <h3>Your next class INFO 2950 will start in 10 minutes at 1:25 PM</h3>
+        <h3>Your next class INFO 2020 will start in 10 minutes at 1:25 PM</h3>
         <p>
           Zoom Link:
-          <a href="https://cornell.zoom.us/j/710144471?pwd=YjlNQVlJbURoeG">
+          <a href="https://cornell.zoom.us/j/313202005">
             {' '}
             https://cornell.zoom.us/j/710144471?pwd=YjlNQVlJbURoeG
           </a>
