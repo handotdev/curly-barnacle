@@ -17,9 +17,10 @@ app.get('/api/schedule', (req, res) => {
     } = req.query;
     functions
         .handleFormSubmission(email, id)
-        .then((status) =>
+        .then((unlinkedClasses) =>
             res.send({
-                success: status,
+                success: true,
+                unlinkedClasses
             })
         )
         .catch((error) =>
@@ -29,6 +30,21 @@ app.get('/api/schedule', (req, res) => {
             })
         );
 });
+
+app.get('/api/addLink', (req, res) => {
+    const {
+        course,
+        section,
+        link
+    } = req.query;
+    functions.handleNewLink(course, section, link)
+        .then((res) => {
+            res.send({success: true, message: res})
+        })
+        .catch((err) => {
+            res.send({success: false, message: err})
+        });
+})
 
 app.get('/api/delete-user', (req, res) => {
     const {

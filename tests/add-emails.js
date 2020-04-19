@@ -1,5 +1,5 @@
-let firebase = require('./functions/db-config');
-const functions = require('./db-functions.js');
+let firebase = require('../functions/db-config');
+const functions = require('../db-functions.js');
 
 const db = firebase.admin.firestore();
 const collectionsRef = db.collection('classTimes');
