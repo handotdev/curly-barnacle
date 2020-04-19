@@ -26,7 +26,7 @@ function Window() {
           Zoom Link:
           <a href="https://cornell.zoom.us/j/313202005">
             {' '}
-            https://cornell.zoom.us/j/710144471?pwd=YjlNQVlJbURoeG
+            https://cornell.zoom.us/j/313202005
           </a>
         </p>
       </div>
