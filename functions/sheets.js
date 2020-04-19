@@ -1,20 +1,24 @@
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
+require('dotenv').config();
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = 'token.json';
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), listMajors);
-});
+// fs.readFile('credentials.json', (err, content) => {
+//   if (err) return console.log('Error loading client secret file:', err);
+//   // Authorize a client with credentials, then call the Google Sheets API.
+//   authorize(JSON.parse(content), listMajors);
+// });
+
+const sheetsCredentials = process.env.SHEETS_CREDENTIALS
+authorize(JSON.parse(sheetsCredentials), updateMeetingToLink)
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -64,4 +68,53 @@ function getNewToken(oAuth2Client, callback) {
       callback(oAuth2Client);
     });
   });
+}
+
+function getMeetingLinks(auth) {
+  return new Promise((resolve, reject) => {
+    const sheets = google.sheets({ version: 'v4', auth });
+    let idLinks = []
+    sheets.spreadsheets.values
+      .get({
+        spreadsheetId: '1pFQNnNGhzM0OJhFTCXoSdSv1JDDuGrNzYH9YxlwNnJc',
+        range: 'LinkFormData!E2:E',
+      }, (err, res) => {
+        if (err) return reject('The API returned an error: ' + err);
+        const rows = res.data.values;
+        if (rows.length) {
+          rows.map((row, index) => {
+            if (!(row[0].includes('cornell.zoom.us'))) {
+              idLinks.push({ meetingID: row[0], cell: `G${2 + index}` })
+            }
+          });
+        } else {
+          reject('No data found.');
+        }
+        resolve(idLinks)
+      })
+  })
+}
+
+function updateMeetingToLink(auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
+  getMeetingLinks(auth)
+    .then(idLinks => {
+      idLinks.forEach(({ meetingID, cell }) => {
+        // reformat meeting ID to zoom link
+        const meetingLink = 'https://cornell.zoom.us/j/' + meetingID.split('-').join('')
+        const value = [[meetingLink]]
+        const cellInput = `LinkFormData!${cell}:${cell}`
+
+        const resource = { values: value }
+        sheets.spreadsheets.values.update({
+          spreadsheetId: '1pFQNnNGhzM0OJhFTCXoSdSv1JDDuGrNzYH9YxlwNnJc',
+          range: cellInput,
+          valueInputOption: 'RAW',
+          resource: resource
+        }, (err, _) => {
+          if (err) return console.log(err);
+          console.log('successfully updated')
+        })
+      })
+    })
 }
