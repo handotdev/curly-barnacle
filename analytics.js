@@ -17,30 +17,13 @@ const loopLinks = async () => {
     const snapshot = await linksRef.get();
     const linksData = [];
     snapshot.forEach((doc) => {
-        linksData.push({course: doc.id, links: doc.data()});
+        linksData.push({ course: doc.id, links: doc.data() });
     })
     return linksData;
 }
 
-const getUniqueStudents = () => {
-
-    const studentsMap = {};
-    loopStudents().then(res => {
-        res.forEach(studentSnapshot => {
-            studentSnapshot.forEach(student => {
-                studentsMap[student.id] = true;
-            })
-        })
-        const uniqueStudentsList = Object.keys(studentsMap);
-        // Log all students
-        console.log(uniqueStudentsList);
-        // Log the number of unique
-        console.log(`Number of unique students: ${uniqueStudentsList.length}`);
-    })
-}
-
 const getUniqueCourses = () => {
-    
+
     const coursesMap = {};
     loopStudents().then(res => {
         res.forEach(studentSnapshot => {
@@ -49,11 +32,11 @@ const getUniqueCourses = () => {
                 if (coursesMap[`${course} ${section}`]) {
                     coursesMap[`${course} ${section}`].count += 1;
                 } else {
-                    coursesMap[`${course} ${section}`] = {count: 1, hasLink: false}
+                    coursesMap[`${course} ${section}`] = { count: 1, hasLink: false }
                 }
             })
         })
-        
+
         // Loop through links to see they exist for a course
         loopLinks().then(res => {
             res.forEach(courseObj => {
@@ -66,7 +49,7 @@ const getUniqueCourses = () => {
             // Build array to visualize most popular courses
             const classesArray = [];
             Object.entries(coursesMap).forEach(([className, info]) => {
-                classesArray.push({className: className, count: info.count, hasLink: info.hasLink})
+                classesArray.push({ className: className, count: info.count, hasLink: info.hasLink })
             })
             // Sort list
             classesArray.sort((a, b) => (a.count > b.count) ? 1 : -1);
@@ -78,6 +61,20 @@ const getUniqueCourses = () => {
     })
 }
 
+const getUniqueStudents = () => {
+    let students = new Set()
+    db.collectionGroup('students')
+        .get()
+        .then(snapshot => {
+            snapshot.docs.forEach(doc => students.add(doc.id))
+            return students
+        })
+        .then(set => {
+            console.log(set)
+            console.log(`Number of unique students: ${set.size}`)
+        })
+}
+
 // Run functions to console log analytics
-// getUniqueStudents();
+// getUniqueStudentsAnsh()
 // getUniqueCourses();
