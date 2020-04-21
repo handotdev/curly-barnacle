@@ -1,15 +1,26 @@
 // Here's to 100 commits and a badass project
 
 import React from 'react';
+import * as firebase from 'firebase/app'
+import "firebase/analytics";
 import { Layout, Divider } from 'antd';
 import { BellTwoTone } from '@ant-design/icons';
-
 import Window from './components/Window';
 import Fields from './components/Fields';
+import * as dotenv from 'dotenv'
 
 import './App.css';
 
+dotenv.config()
+const analytics = firebase.analytics;
+const firebaseConfig = JSON.parse(process.env.FBCONFIG)
+
+firebase.initializeApp(firebaseConfig)
+
 const { Header, Content, Footer } = Layout;
+
+analytics().setCurrentScreen(window.location.pathname) // sets `screen_name` parameter
+analytics().logEvent('screen_view') // log event with `screen_name` parameter attached
 
 function App() {
   return (
