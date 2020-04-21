@@ -79,5 +79,5 @@ const getUniqueCourses = () => {
 }
 
 // Run functions to console log analytics
-// getUniqueStudents();
+getUniqueStudents();
 // getUniqueCourses();

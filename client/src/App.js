@@ -1,6 +1,6 @@
 // Here's to 100 commits and a badass project
-
 import React from 'react';
+import ReactGA from 'react-ga';
 import { Layout, Divider } from 'antd';
 import { BellTwoTone } from '@ant-design/icons';
 
@@ -8,6 +8,9 @@ import Window from './components/Window';
 import Fields from './components/Fields';
 
 import './App.css';
+
+ReactGA.initialize('UA-164161545-1');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 const { Header, Content, Footer } = Layout;
 
