@@ -14,7 +14,7 @@ const TOKEN_PATH = 'token.json';
 const sheetsCredentials = process.env.SHEETS_CREDENTIALS
 
 // call the script.
-authorize(JSON.parse(sheetsCredentials), updateMeetingToLink)
+authorize(JSON.parse(sheetsCredentials), getMeetingLinks)
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -95,14 +95,20 @@ function getMeetingLinks(auth) {
         if (rows.length) {
           rows.map((row, index) => {
             // TODO: change this check.
-            if (!(row[0].includes('cornell.zoom.us') || row[0].includes('canvas.cornell.edu'))) {
-              // Push the meetingID and corresponding cell onto iddLinks
-              idLinks.push({ meetingID: row[0], cell: `G${2 + index}` })
+            if (row.length !== 0) {
+              console.log(row)
+              if (/[0-9]{3}-[0-9]{3}-[0-9]{3,5}/.test(row[0])) {
+                // Push the meetingID and corresponding cell onto iddLinks
+                idLinks.push({ meetingID: row[0], cell: `G${2 + index}`, toUpdate: true })
+              } else if (row[0].includes('cornell.zoom.us') || row[0].includes('canvas.cornell.edu')) {
+                idLinks.push({ meetingID: row[0], cell: `G${2 + index}`, toUpdate: false })
+              }
             }
           });
         } else {
           reject('No data found.');
         }
+        console.log(idLinks)
         resolve(idLinks)
       })
   })
@@ -114,9 +120,9 @@ function updateMeetingToLink(auth) {
   getMeetingLinks(auth)
     .then(idLinks => {
       let dataArr = []
-      idLinks.forEach(({ meetingID, cell }) => {
-        // reformat meeting ID to zoom link
-        const meetingLink = 'https://cornell.zoom.us/j/' + meetingID.split('-').join('')
+      idLinks.forEach(({ meetingID, cell, toUpdate }) => {
+        // reformat meeting ID to zoom link (if it needs to be updated)
+        let meetingLink = toUpdate ? 'https://cornell.zoom.us/j/' + meetingID.split('-').join('') : meetingID
 
         // set the value to enter onto the cell
         const value = [[meetingLink]]
@@ -148,3 +154,4 @@ function updateMeetingToLink(auth) {
       })
     })
 }
+
