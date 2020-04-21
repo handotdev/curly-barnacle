@@ -1,6 +1,6 @@
-# curly-barnacle
+# Cornell Notifs
 
-For all your curly barnacle needs on Firebase
+An email-based reminder that sends Zoom links before classes.
 
 ## Quick Start
 
@@ -8,6 +8,18 @@ For all your curly barnacle needs on Firebase
 # Install dependencies for server
 npm install
 
+# Install dependencies for client
+cd client && npm install
+
+# Build client production files
+npm build
+
+# Run
+cd .. && npm start
+```
+
+## Concurrent Development
+```bash
 # Run the client & server with concurrently
 npm run both
 
