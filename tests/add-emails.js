@@ -33,13 +33,14 @@ const times = ['4:00', '4:05', '4:10', '4:15', '4:20', '4:25', '4:30', '4:35', '
 //     });
 // })
 let alpha = "qwertyuiopasdfghjklzxcvbnm"
-const emails = []
+const emails = ['ag759@cornell.edu', 'hyw2@cornell.edu']
 
 alpha.split("").forEach(char => {
+    emails.push(char + "@cornell.edu")
     emails.push(char + "a@cornell.edu")
 })
 
 emails.forEach(email => {
-    functions.insertData(collectionsRef, "M 12:10PM", email, toAdd.data)
+    functions.insertData(collectionsRef, "M 12:45PM", email, toAdd.data)
         .then((res) => console.log('successfully added email for ' + email))
 })

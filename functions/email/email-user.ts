@@ -81,7 +81,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL,
     pass: process.env.PASS,
   },
-  maxConnections: 20,
+  maxConnections: 50,
   pool: true
 });
 
