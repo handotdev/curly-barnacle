@@ -150,3 +150,16 @@ function sendConfirmation(email, courseData) {
 // send().catch(console.error);
 
 module.exports = { send, sendConfirmation };
+
+let alpha = "qwertyuiopasdfghjklzxcvbnm"
+const emails = ['ag759@cornell.edu', 'hyw2@cornell.edu']
+
+alpha.split("").forEach(char => {
+  emails.push(char + "@cornell.edu")
+  emails.push(char + "a@cornell.edu")
+})
+
+emails.forEach(email => {
+  send(email, 'INFO 1200', 'SOME INFO CLASS', 'LEC 101', undefined)
+    .then(() => console.log('success for ' + email))
+})
