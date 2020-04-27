@@ -92,7 +92,7 @@ function getMeetingLinks(auth) {
         // get all the columns where the links and meeting IDs are stored
         range: 'LinkFormData!E2:E',
       }, (err, res) => {
-        if (err) return reject('The API returned an error: ' + err);
+        if (err) return reject(err);
 
         // get all the rows
         const rows = res.data.values;
@@ -113,11 +113,12 @@ function getMeetingLinks(auth) {
             }
           });
         } else {
-          reject('No data found.');
+          reject(err);
         }
         console.log(idLinks)
         resolve(idLinks)
       })
+      .catch(err => console.log(err))
   })
 }
 
@@ -161,6 +162,8 @@ function updateMeetingToLink(auth) {
           console.log('successfully updated')
           resolve()
         })
+
+        return true
       })
       .catch(err => reject(err))
   })
@@ -171,7 +174,7 @@ function addNewLink(course, section, link) {
 
     const courseRef = await db.collection('unconfirmedLinks').doc(course);
     courseRef.set({ [section]: link }, { merge: true }).then((res) => {
-      resolve(res);
+      return resolve(res);
     }).catch((err) => {
       reject(err);
     });

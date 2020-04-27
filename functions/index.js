@@ -113,5 +113,5 @@ exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
   .timeZone('America/New_York')
   .onRun(async (context) => {
     console.log('sending emails')
-    await sendEmails()
+    return sendEmails()
   })
