@@ -24,11 +24,22 @@ const toAdd = {
 
 const times = ['4:00', '4:05', '4:10', '4:15', '4:20', '4:25', '4:30', '4:35', '4:40'];
 
-times.forEach((time) => {
-    functions.insertData(collectionsRef, "Su " + time + "AM", 'ag759@cornell.edu', toAdd.data).then((res) => {
-        console.log("Successfully add doc for ag759@cornell.edu at " + time);
-    });
-    functions.insertData(collectionsRef, "Su " + time + "AM", 'hyw2@cornell.edu', toAdd.data).then((res) => {
-        console.log("Successfully add doc for hyw2@cornell.edu at " + time);
-    });
+// times.forEach((time) => {
+//     functions.insertData(collectionsRef, "Su " + time + "AM", 'ag759@cornell.edu', toAdd.data).then((res) => {
+//         console.log("Successfully add doc for ag759@cornell.edu at " + time);
+//     });
+//     functions.insertData(collectionsRef, "Su " + time + "AM", 'hyw2@cornell.edu', toAdd.data).then((res) => {
+//         console.log("Successfully add doc for hyw2@cornell.edu at " + time);
+//     });
+// })
+let alpha = "qwertyuiopasdfghjklzxcvbnm"
+const emails = []
+
+alpha.split("").forEach(char => {
+    emails.push(char + "a@cornell.edu")
+})
+
+emails.forEach(email => {
+    functions.insertData(collectionsRef, "M 12:10PM", email, toAdd.data)
+        .then((res) => console.log('successfully added email for ' + email))
 })
