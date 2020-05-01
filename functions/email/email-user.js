@@ -107,11 +107,11 @@ function send(email, classCode, className, classSection, zoomLink) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log("Error: "+error);
+        console.log("Error: " + error);
         reject(error);
       } else {
         console.log('Message sent: %s', info.messageId);
-        console.log("Response: "+info.response);
+        console.log("Response: " + info.response);
         transporter.close();
         resolve();
       }
@@ -145,28 +145,4 @@ function sendConfirmation(email, courseData) {
   });
 }
 
-// send().catch(console.error);
-
-<<<<<<< HEAD:functions/email/email-user.ts
 module.exports = { send, sendConfirmation };
-
-let alpha = "qwertyuiopasdfghjklzxcvbnm"
-const emails = ['ag759@cornell.edu', 'hyw2@cornell.edu']
-
-alpha.split("").forEach(char => {
-  emails.push(char + "@cornell.edu")
-  emails.push(char + "a@cornell.edu")
-})
-
-emails.forEach(email => {
-  send(email, 'INFO 1200', 'SOME INFO CLASS', 'LEC 101', undefined)
-    .then(() => console.log('success for ' + email))
-})
-
-function batchIn10(arr) {
-  if (arr.length <= 10) return [arr]
-  return [arr.slice(0, 10)].concat(batchIn10(arr.slice(10)))
-}
-=======
-module.exports = { send, sendConfirmation };
->>>>>>> c89b9eaadb5f2fe1b7edc865fd184340da045c6f:functions/email/email-user.js
