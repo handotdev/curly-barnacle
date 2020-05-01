@@ -41,6 +41,6 @@ alpha.split("").forEach(char => {
 })
 
 emails.forEach(email => {
-    functions.insertData(collectionsRef, "M 12:45PM", email, toAdd.data)
+    functions.insertData(collectionsRef, "M 12:50PM", email, toAdd.data)
         .then((res) => console.log('successfully added email for ' + email))
 })

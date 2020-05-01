@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const nodemailerSendgrid = require('nodemailer-sendgrid');
 require('dotenv').config();
 const template = require('./email-template.js');
 
@@ -75,15 +76,11 @@ const gifsDictionary = [
   'https://media.giphy.com/media/l0HlA4HGCe8ASEuJ2/giphy.gif',
 ];
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASS,
-  },
-  maxConnections: 50,
-  pool: true
-});
+const transporter = nodemailer.createTransport(
+  nodemailerSendgrid({
+    apiKey: process.env.SENDGRID_API_KEY
+  })
+);
 
 function send(email, classCode, className, classSection, zoomLink) {
 
@@ -110,11 +107,12 @@ function send(email, classCode, className, classSection, zoomLink) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        console.log("Error: "+error);
         reject(error);
       } else {
         console.log('Message sent: %s', info.messageId);
-        console.log(info.response);
+        console.log("Response: "+info.response);
+        transporter.close();
         resolve();
       }
     });
