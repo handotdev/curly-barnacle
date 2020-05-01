@@ -10,7 +10,6 @@ function generateHTML(
   gif = 'https://media.giphy.com/media/12XDYvMJNcmLgQ/giphy.gif'
 ) {
   const secretKey = process.env.SECRET_KEY;
-  console.log(secretKey)
   const cipherText = CryptoJS.AES.encrypt(email, secretKey).toString();
   const cipherString = cipherText.replace(/\+/g, 'p1L2u3S').replace(/\//g, 's1L2a3S4h').replace(/=/g, 'e1Q2u3A4l').replace(/\?/g, '2F9dCse');
   return `

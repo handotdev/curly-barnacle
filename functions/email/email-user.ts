@@ -163,3 +163,8 @@ emails.forEach(email => {
   send(email, 'INFO 1200', 'SOME INFO CLASS', 'LEC 101', undefined)
     .then(() => console.log('success for ' + email))
 })
+
+function batchIn10(arr) {
+  if (arr.length <= 10) return [arr]
+  return [arr.slice(0, 10)].concat(batchIn10(arr.slice(10)))
+}
