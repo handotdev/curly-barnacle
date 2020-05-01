@@ -78,7 +78,7 @@ const gifsDictionary = [
 
 const transporter = nodemailer.createTransport(
   nodemailerSendgrid({
-    apiKey: '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'
+    apiKey: process.env.SENDGRID_API_KEY
   })
 );
 
@@ -107,11 +107,11 @@ function send(email, classCode, className, classSection, zoomLink) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log("Error: " + error);
+        console.log("Error: "+error);
         reject(error);
       } else {
         console.log('Message sent: %s', info.messageId);
-        console.log("Response: " + info.response);
+        console.log("Response: "+info.response);
         transporter.close();
         resolve();
       }
@@ -144,5 +144,7 @@ function sendConfirmation(email, courseData) {
     });
   });
 }
+
+// send().catch(console.error);
 
 module.exports = { send, sendConfirmation };
