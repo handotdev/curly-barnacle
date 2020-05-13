@@ -107,11 +107,11 @@ function send(email, classCode, className, classSection, zoomLink) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log("Error: "+error);
+        console.log("Error: " + error);
         reject(error);
       } else {
         console.log('Message sent: %s', info.messageId);
-        console.log("Response: "+info.response);
+        console.log("Response: " + info.response);
         transporter.close();
         resolve();
       }
@@ -145,6 +145,32 @@ function sendConfirmation(email, courseData) {
   });
 }
 
-// send().catch(console.error);
+function farewell(email) {
+  const mailOptions = {
+    from: 'Notifs <curlybarnacles3333@gmail.com>',
+    to: email,
+    subject: '🎊 We made it to the end!',
+    html: template.generateGoodbyeHTML(),
+    headers: {
+      'X-Entity-Ref-ID': null,
+    },
+  };
 
-module.exports = { send, sendConfirmation };
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        console.log('Message sent: %s', info.messageId);
+        console.log(info.response);
+        resolve();
+      }
+    });
+  });
+}
+
+
+farewell('ag759@cornell.edu')
+
+module.exports = { send, sendConfirmation, farewell };

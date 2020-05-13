@@ -55,7 +55,20 @@ function generateConfirmationHTML(courseData) {
   )
 }
 
+function generateGoodbyeHTML() {
+  return (
+    `<p>Hey there!</p><br>
+    <p>This will be our last email to you guys this semester 😢. It's been a tough semester for all of us, but hey... we made it! Just one last stretch, and we'll be done with finals. We can do it! We hope you guys have an amazing summer. To our seniors... congratulations! It sucks to not be with y'all on campus to see you off as you step into a new phase of your life. To the others... we hope to see you around next semester!</p><br>
+    <p>Best of luck on finals, you're gonna do just fine! For now, this is goodbye.</p><br>
+
+    <p>With ❤️,<p>
+    <p>Ansh and Han</p>
+    `
+  )
+}
+
 module.exports = {
   generateHTML,
-  generateConfirmationHTML
+  generateConfirmationHTML,
+  generateGoodbyeHTML
 };
