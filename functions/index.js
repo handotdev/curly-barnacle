@@ -65,51 +65,52 @@ function findNextPossibleClassTime() {
   return `${DayMapping[estDate.day()]} ${getRegularTime(estDate.hours(), estDate.minutes())}`;
 }
 
-const sendEmails = async () => {
-
+const sendEmails = () => {
   // Find the time to search Firebase for
   const docToSearch = findNextPossibleClassTime();
-  // Initialize promises array
-  let promises = [];
 
-  await db
-    .collection('classTimes')
-    // Find the current time's document
+  const path = db.collection('classTimes')
     .doc(docToSearch)
     .collection('students')
-    // get all documents
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.docs.forEach(async (doc) => {
-        const email = doc.id;
-        const classDetails = doc.data();
-        const classCode = classDetails.course;
-        const className = classDetails.name;
-        const classSection = classDetails.section;
 
-        // Store the reference to the document corresponding to the class code
-        const classRef = db.collection('zoomLinks').doc(classCode);
-        await classRef
-          .get()
-          .then(linkdoc => {
-            // If class exists
-            if (linkdoc.exists) {
-              const link = linkdoc.data()[classSection];
-              promises.push(emailUtil.send(email, classCode, className, classSection, link));
-            } else {
-              promises.push(emailUtil.send(email, classCode, className, classSection, undefined));
-            }
-            return true
-          })
-          .catch(err => console.log(err))
+  return new Promise(async (resolve, reject) => {
+    // Initialize promises array
+    let promises = [];
+
+    await path
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.docs.forEach(async (doc) => {
+          const email = doc.id;
+          const classDetails = doc.data();
+          const classCode = classDetails.course;
+          const className = classDetails.name;
+          const classSection = classDetails.section;
+
+          // Store the reference to the document corresponding to the class code
+          const classRef = db.collection('zoomLinks').doc(classCode);
+          await classRef
+            .get()
+            .then(linkdoc => {
+              // If class exists
+              if (linkdoc.exists) {
+                const link = linkdoc.data()[classSection];
+                promises.push(emailUtil.send(email, classCode, className, classSection, link));
+              } else {
+                promises.push(emailUtil.send(email, classCode, className, classSection, undefined));
+              }
+              return true
+            })
+            .catch(err => reject(err))
+        })
+        Promise.all(promises).catch(err => console.log(err));
+        return resolve()
       })
-      Promise.all(promises).catch(err => console.log(err));
-      return true
-    })
-    .catch(err => console.log(err))
+      .catch(err => reject(err))
+  })
 }
 
-exports.scheduledEmailSend = functions.pubsub.schedule('*/5 7-22 * * *')
+exports.scheduledEmailSend = functions.pubsub.schedule('*/5 * * * *')
   .timeZone('America/New_York')
   .onRun(async (context) => {
     console.log('sending emails')
